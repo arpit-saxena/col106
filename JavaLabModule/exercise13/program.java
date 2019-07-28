@@ -8,5 +8,14 @@ public class program
 		average is 4.25. Please note that if the array has no elements, the average should
 		be 0.
 		*/
+		if (numbers.length == 0) {
+			return 0.0f;
+		}
+
+		float sum = 0.0f;
+		for (int number: numbers) {
+			sum += number;
+		}
+		return sum / numbers.length;
 	}
 }

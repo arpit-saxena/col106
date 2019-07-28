@@ -9,7 +9,13 @@ public class program
 		Return the result in an array [p,q] where p<=q meaning the smaller 
 		element should be the first element of the array
 		*/
-		float ret[] = {1.0f,2.0f};
-		return ret;
+
+		float det = b * b - 4 * c;
+		float rootDet = (float) Math.sqrt(det);
+		float root1 = (-b - rootDet) / 2.0f;
+		float root2 = (-b + rootDet) / 2.0f;
+
+		float[] roots = { root1, root2 };
+		return roots;
 	}
 }

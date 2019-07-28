@@ -1,5 +1,14 @@
 public class program
 {
+	private int hcf (int a, int b)
+	{
+		if (b == 0) {
+			return a;
+		}
+
+		return hcf (b, a % b);
+	}
+
 	public int test(int n, int m)
 	{
 		/*
@@ -8,6 +17,6 @@ public class program
 		number that is divisble by both n amd m. For e.g. is n is 12 and m is 14, the
 		LCM is 84. If n is 32 and m is 16, the LCM is 32.
 		*/
-		return n;
+		return n * m / hcf(n,m);
 	}
 }
