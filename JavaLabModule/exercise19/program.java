@@ -7,7 +7,6 @@ public class program
 		string having chars from index m to end of s1 and then 0 to n of s2 (both m and n
 		are inclusive). For eg, if s1=”hello”, s2=”world”, m=3, n=0, then answer is ”low”
 		*/
-		String ret = "ab";
-		return ret;
+		return s1.substring(m) + s2.substring(0, n + 1);
 	}
 }

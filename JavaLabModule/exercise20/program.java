@@ -13,7 +13,20 @@ public class program
 		answers = {’c’,’c’,’ ?’,’b’}
 		then score is -1 + 4 + 0 + 4 = 7
 		*/
-		int ret = 0;
-		return ret;
+
+		int score = 0;
+		for (int i = 0; i < answer.length; i++)
+		{
+			if (answer[i] == key[i])
+			{
+				score += 4;
+			}
+			else if (answer[i] != '?')
+			{
+				score -= 1;
+			}
+		}
+
+		return score;
 	}
 }

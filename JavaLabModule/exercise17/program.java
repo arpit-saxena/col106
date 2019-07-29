@@ -10,6 +10,28 @@ public class program
 		12345121, the most frequently occuring digit is 1. If the number is 9988776655
 		the output should be 5 as it is the smallest of the digits with the highest frequency.
 		*/
-		return 4;
+		int[] freq = new int[10];
+		for (int i = 0; i < 10; i++)
+		{
+			freq[i] = 0;
+		}
+
+		for (int i = 0; i < number.length(); i++)
+		{
+			freq[number.charAt(i) - '0']++;
+		}
+
+		int maxFreq = -1;
+		int maxFreqDigit = -1;
+		for (int i = 0; i < 10; i++)
+		{
+			if (freq[i] > maxFreq)
+			{
+				maxFreq = freq[i];
+				maxFreqDigit = i;
+			}
+		}
+
+		return maxFreqDigit;
 	}
 }

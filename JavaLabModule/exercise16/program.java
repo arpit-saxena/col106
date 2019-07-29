@@ -1,5 +1,23 @@
 public class program
 {
+	private boolean endsWith(String test, String end)
+	{
+		if (test.length() < end.length())
+		{
+			return false;
+		}
+
+		for(int i = 0; i < end.length(); i++)
+		{
+			if (test.charAt(test.length() - i - 1) != end.charAt(end.length() - i - 1)) 
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public String[] test(String fileNames[])
 	{
 		/*
@@ -11,7 +29,34 @@ public class program
 		If the input is {”can.java”,”nca.doc”,”and.java”,”dan.txt”,”can.java”,”andjava.pdf”} 
 		the expected output is {”can.java”,”and.java”,”can.java”}
 		*/
-		String javaFiles[] = {"a.java"};
+
+		int length = 0;
+		boolean[] ends = new boolean[fileNames.length];
+		for (int i = 0; i < fileNames.length; i++)
+		{
+			if (endsWith(fileNames[i], ".java"))
+			{
+				ends[i] = true;
+				length++;
+			}
+			else
+			{
+				ends[i] = false;
+			}
+		}
+
+		String javaFiles[] = new String[length];
+
+		int javaFileIndex = 0;
+		for(int i = 0; i < ends.length; i++)
+		{
+			if (ends[i])
+			{
+				javaFiles[javaFileIndex] = fileNames[i];
+				javaFileIndex++;
+			}
+		}
+
 		return javaFiles;
 	}
 }

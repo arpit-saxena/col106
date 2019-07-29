@@ -7,7 +7,16 @@ public class program
 		add them. Each matrix is provided as an int[][], a 2 dimensional integer array.
 		The expected output is also 2 dimensional integer array.
 		*/
-		int addition[][]= {{1,2,3},{4,5,6}};
-		return addition;
+		int[][] result = new int[M1.length][M1[0].length];
+		
+		for (int i = 0; i < result.length; i++)
+		{
+			for (int j = 0; j < result[i].length; j++)
+			{
+				result[i][j] = M1[i][j] + M2[i][j];
+			}
+		}
+
+		return result;
 	}
 }
