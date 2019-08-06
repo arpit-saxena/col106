@@ -53,9 +53,9 @@ public class Assignment1 {
             return student.departmentShare();
         }
 
-        Iterator<CourseGrade> iter = student.courseList();
+        Iterator<CourseGrade_> iter = student.courseList();
         while (iter.hasNext()) {
-            CourseGrade courseGrade = iter.next();
+            CourseGrade courseGrade = (CourseGrade) iter.next();
             if (courseGrade.coursenum().equals(entityName)) {
                 return courseGrade.courseShare(entryNumber);
             }
@@ -93,9 +93,9 @@ public class Assignment1 {
             student.cgpa()
         );
 
-        Iterator<CourseGrade> iter = student.courseList();
+        Iterator<CourseGrade_> iter = student.courseList();
         while(iter.hasNext()) {
-            CourseGrade courseGrade = iter.next();
+            CourseGrade courseGrade = (CourseGrade) iter.next();
             ret += String.format("%s %s ", 
                 courseGrade.coursenum(),
                 courseGrade.grade().toString()

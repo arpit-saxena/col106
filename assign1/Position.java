@@ -1,5 +1,3 @@
-import interfaces.Position_;
-
 class Position<T> implements Position_<T> {
 	private Position<T> next;
 	private T val;

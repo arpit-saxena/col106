@@ -1,5 +1,3 @@
-import interfaces.GradeInfo_;
-
 public class GradeInfo implements GradeInfo_ {
     private GradeInfo_.LetterGrade grade;
 
@@ -13,18 +11,8 @@ public class GradeInfo implements GradeInfo_ {
     }
 
     public static int gradepoint(GradeInfo_ grade){
-        return GradeInfo_.gradepoint(grade.grade());
-    }
-
-    // TODO: Make sure this is right
-    public boolean isCompleted() {
-        switch (grade) {
-            case E:
-            case F:
-            case I:
-                return false;
-        }
-        return true;
+        GradeInfo grade2 = (GradeInfo) grade;
+        return GradeInfo_.gradepoint(grade2.grade());
     }
 
     public String toString() {

@@ -1,8 +1,4 @@
-package interfaces;
-
 import java.util.Iterator;
-
-//TODO: Had TO CHANGE!!
 
 public interface Student_ {
    public String name();               	// Returns student's name
@@ -11,6 +7,6 @@ public interface Student_ {
    public String department();         	// Returns student's department name
    public String completedCredits();   	// Returns student's credits earned
    public String cgpa();   		// Returns student's cgpa until the previous semester
-   public Iterator<? extends CourseGrade_> courseList();// Returns an iterator for all courses for this student
+   public Iterator<CourseGrade_> courseList();// Returns an iterator for all courses for this student
 					      // including those in the current semester
 }

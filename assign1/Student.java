@@ -1,5 +1,3 @@
-import interfaces.CourseGrade_;
-import interfaces.Student_;
 import java.util.Iterator;
 
 class Student implements Student_ {
@@ -7,8 +5,10 @@ class Student implements Student_ {
     private String entryNumber;
     private Entity hostel;
     private Entity department;
-    private SortedLinkedList<CourseGrade> courses = new SortedLinkedList<CourseGrade>((a, b) -> {
-        return a.course.courseNum.compareTo(b.course.courseNum) < 0;
+    private SortedLinkedList<CourseGrade_> courses = new SortedLinkedList<>((a, b) -> {
+        CourseGrade a1 = (CourseGrade) a;
+        CourseGrade b1 = (CourseGrade) b;
+        return a1.course.courseNum.compareTo(b1.course.courseNum) < 0;
     });
 
     public static LinkedList<Student> studentList = new LinkedList<>();
@@ -58,7 +58,7 @@ class Student implements Student_ {
     }
 
     public String completedCredits() {
-        Iterator<CourseGrade> iter = courses.elements();
+        Iterator<CourseGrade_> iter = courses.elements();
         int credits = 0;
         while (iter.hasNext()) {
             CourseGrade_ courseGrade = iter.next();
@@ -76,11 +76,11 @@ class Student implements Student_ {
     public String cgpa() {
         int credits = 0;
         int gp = 0;
-        Iterator<CourseGrade> iter = courses.elements();
+        Iterator<CourseGrade_> iter = courses.elements();
         while (iter.hasNext()) {
             CourseGrade_ courseGrade = iter.next();
             String grade = courseGrade.grade().toString();
-            if (grade.equals("E") || grade.equals("F") || grade.equals("I")) {
+            if (grade.equals("I")) {
                 continue;
             }
 
@@ -99,8 +99,7 @@ class Student implements Student_ {
         courses.add(courseGrade);
     }
 
-    public Iterator<CourseGrade> courseList() {
-        Iterator<CourseGrade> iter = courses.elements();
-        return iter;
+    public Iterator<CourseGrade_> courseList() {
+        return courses.elements();
     }
 }

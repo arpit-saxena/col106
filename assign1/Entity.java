@@ -1,5 +1,3 @@
-import interfaces.Entity_;
-import interfaces.Student_;
 import java.util.Iterator;
 
 public class Entity implements Entity_ {

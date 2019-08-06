@@ -1,5 +1,3 @@
-import interfaces.CourseGrade_;
-
 public class CourseGrade implements CourseGrade_ {
     Course course;
     GradeInfo grade;

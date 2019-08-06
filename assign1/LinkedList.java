@@ -1,5 +1,3 @@
-import interfaces.LinkedList_;
-import interfaces.Position_;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 

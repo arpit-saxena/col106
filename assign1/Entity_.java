@@ -1,5 +1,3 @@
-package interfaces;
-
 import java.util.Iterator;
 
 public interface Entity_ { // Entities Classes Hostel, Dept, and Course all have this functionality.
