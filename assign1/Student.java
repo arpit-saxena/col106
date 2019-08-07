@@ -87,7 +87,14 @@ class Student implements Student_ {
             credits += 3;
             gp += 3 * GradeInfo.gradepoint(courseGrade.grade());
         }
-        return String.format("%.2f", (float) gp / credits);
+        float cg;
+        if (credits == 0) {
+            cg = 0.0f;
+        } else {
+            cg = gp / credits;
+        }
+
+        return String.format("%.2f", cg);
     }
 
     public void addCourse(String courseName, String courseNum, String grade) {

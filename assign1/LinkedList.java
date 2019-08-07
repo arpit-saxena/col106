@@ -6,22 +6,22 @@ public class LinkedList<T> implements LinkedList_<T> {
 	protected Position<T> tail;
 
 	public Position<T> add(T element) {
+		Position<T> newPosition = new Position<T>(element);
 		if (head == null) { // also implies that tail is null
-			head = new Position<T>(element);
+			head = newPosition;
 			tail = head;
-			return head;
+			return newPosition;
 		}
 		
 		if (head == tail) {
-			tail = new Position<T>(element);
+			tail = newPosition;
 			head.setNext(tail);
-			return tail;
+			return newPosition;
 		}
 
-		Position<T> temp = new Position<T>(element);
-		tail.setNext(temp);
+		tail.setNext(newPosition);
 		tail = tail.after();
-		return temp;
+		return newPosition;
 	}
 
 	public PositionIterator<T> positions() {
@@ -29,10 +29,10 @@ public class LinkedList<T> implements LinkedList_<T> {
 	}
 
 	public int count() {
-		Position<T> curr = head;
+		Iterator<Position_<T>> iter = positions();
 		int c = 0;
-		while (curr != null) {
-			curr = curr.after();
+		while (iter.hasNext()) {
+			iter.next();
 			c++;
 		}
 		return c;
@@ -63,10 +63,6 @@ class PositionIterator<T> implements Iterator<Position_<T>> {
 	public boolean hasNext() {
 		return position != null;
 	}
-
-	public void remove() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
 }
 
 class ElementIterator<T> implements Iterator<T> {
@@ -88,9 +84,5 @@ class ElementIterator<T> implements Iterator<T> {
 
 	public boolean hasNext() {
 		return position != null;
-	}
-
-	public void remove() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
 	}
 }

@@ -1,0 +1,154 @@
+Assignment 1, COL106, Semester 1 2019-20
+Arpit Saxena, 2018MT10742
+
+Documentation is divided into files, explaining what any non-trivial function 
+is doing. 
+
+-- Position.java
+    A Position class objects represents a reference pointing to a value in memory
+    and also holding the reference to the next Position. It is the basic unit of
+    the linked list.
+
+-- LinkedList.java
+    Contains implementation of LinkedList
+    -- add(): 
+        Inserts an element into a linked list. If no element is there in the list,
+        the head is set to position object pointing to that element, and so is the
+        tail. Otherwise, if there's only element in the list, tail is set to point
+        to the position object, and head object's next is changed to point to tail.
+        Otherwise, the tail's next is set to the position object. Returns the
+        position object that has been added
+    -- Iterators: PositionIterator and ElementIterator
+        Used to iterate over the list. PositionIterator returns a Position<T> object
+        while ElementIterator returns T. They have very similar implementations, that
+        they maintain an internal position object and return the required value using
+        it when next is called and check if it's next exists when hasNext is called.
+    -- count():
+        Uses the positions() method to iterate through the list and returns the number
+        of elements in the list.
+
+-- SortedLinkedList.java
+    SortedLinkedList, as the name suggests, is a linked list which is sorted wrt some
+    sort of comparison defined. For this class, insertion is always made such that the
+    the list remains sorted at all times, so it overrides the add method of its parent
+    class, LinkedList.
+    -- ComparisonMethod<T> interface: 
+        This method contains only function compare which compares two objects a and b
+        of type T. Since it contains only one function, it is a functional interface,
+        which means we can set it equal to a lambda expression directly to set it up.
+        No explicit object creation is required.
+        - compare(a, b) returning true <=> a comes before b. It is assumed to be
+          a total order (mainly we use the transitivity property).
+    -- add() method:
+        Here we have to add a element to the list such that it still remains sorted.
+        Firstly, a Position object is created for it. Then, if head is null, i.e. the
+        list is empty, head is set equal to it, and so is tail, and it's returned.
+        Otherwise, we begin by comparing it with head and moving through the list.
+    
+-- Entity.java
+    Contains implementation of Entity, a general class for Hostel, Department and 
+    Course. Each entity has a list of students belonging to it.
+    The Entity class also holds lists of all hostels, courses and departments.
+    -- Course class extends Entity class and contains the course's number too
+    -- _static_ addHostel, addCourse and addDepartment methods:
+        Add the provided student object to the entity object with name as provided,
+        and return the Entity object to which it was added. Either the entity exists
+        in the lists maintained internally or a new entity is created, added to the 
+        internal list, student object is added to it and it's returned.
+    -- _static_ addTo():
+        Helper method for above methods. Provide it with a LinkedList object, and
+        entity name and it does the work as specified above.
+    -- sharedWith():
+        Returns a space separated list of entry numbers of students belonging to this
+        entity, except the entry number given to the number. Returns an empty string if
+        the given entry number does not occur in the student list.
+
+-- GradeInfo.java
+    Contains implementation of GradeInfo_ interface.
+    -- constructor:
+        Takes in a string, finds the corresponding LetterGrade value for it. If not
+        found prints an error and exits.
+    -- _static_ gradepoint:
+        This is different from the gradepoint method of GradeInfo_ in that it takes a 
+        GradeInfo object. It calls GradeInfo_'s gradepoint on the grade stored
+        internally in GradeInfo object.
+
+-- CourseGrade.java
+    Implementation of CourseGrade_
+
+-- Student.java
+    Contains implementation of Student_ interface.
+    -- _static_ allStudents: list containing references to all student objects.
+    -- courses:
+        It is a SortedLinkedList of courses of the student, sorted by the course numbers.
+    -- _static_ get():
+        Iterates through the allStudents list looking for the entry number provided to
+        it and returns the reference. If not found, returns null.
+    -- constructor:
+        Sets the required fields, adding data to allHostel and allDepartment lists. 
+        Then adds the constructed student object to the allStudents list.
+    -- completedCredits():
+        Iterates through all the courses of student, counts 3 credits for all courses
+        in which the grade obtained is not E, F or I. Returns the total count as string.
+    -- cgpa():
+        Iterates through all the courses of a student, and barring the courses with I
+        grade, calculates the weighted mean of the gradepoint of all the courses with
+        credits wrt the credit of the course, and returns it rounded to 2 decimal places.
+        If all courses have I grade, 0.00 is returned;
+    -- addCourse():
+        Takes in course name, course num and grade obtained in it (as String). Calls
+        addCourse method of Entity, and then creates a CourseGrade object, and adds 
+        that object to the internally maintained courses list.
+
+-- FileInput.java 
+    Defines a class FileInput which has basic utilities to get data from files.
+    Internally, it uses a fileReader which reads the file line by line.
+    -- constructor:
+        Takes in a file name, and makes a FileReader object with it. If the file doesn't
+        exist, it prints so to STDERR and exits.
+    -- getChar:
+        Calls the read method of fileReader to return a single character from file stream
+    -- getString:
+        Gets characters from consecutive calls to getChar. Ignores all the whitespace till
+        a non-whitespace character is encountered. After that, adds the characters to a
+        string till next whitespace is encountered and returns the string.
+    -- getLine:
+        Reads characters from stream and adds to a string till a '\n' is encountered. 
+        Returns the resulting string.
+    -- moreAvailable():
+        Calls fileReader.ready() to check if file stream has more data.
+    -- close():
+        Closes the internal fileReader object.
+
+-- Assignment1.java
+    Main class which is run with file names.
+    - getData():
+        Takes in student record and courses file names, parses data from them.
+        For the student record, creates a new Student with the parsed data.
+        For each course file line, finds a student of the given entry number and adds
+        the course to it. If student is not found, prints an error and exits.
+    - printReverse():
+        Takes in an iterator<String>. If the iterator has no next element, it exits.
+        Otherwise it stores it, and then calls itself with the iterator. Then prints
+        out the stored String in a line. So, a string is printed after all the strings
+        next to it in the sequence are printed. So, the strings of the Iterator are
+        printed in reverse, one in each line.
+    - answerShareQuery:
+        Takes in entry number and entity name.
+        Finds a student with the given entry number. Compares the name of entity with
+        names of its hostel, department and then with the course number of all it's
+        courses. If found, calls the found entity's sharedWith method and returns the
+        result. If no such entity is found, prints to STDERR and exits.
+    - answerCourseTitleQuery:
+        Takes in course number and searches Entity.coursesList for it. Returns the
+        title of the course found. If course is not found, prints an error and exits.
+    - answerInfoQuery:
+        Takes in entry number and finds a corresponding Student object for it. Returns
+        info of it in the required format. If not found, prints an error and exits.
+    - answerQueries:
+        First determines the type of query and then calls the appropriate function.
+        Returned strings are stored in a linked list and then printed in reverse.
+    - main:
+        Checks if there are correct number of arguments. If not, prints the expected
+        format and exits. Otherwise, calls getData and answerQueries with appropriate
+        parameters.

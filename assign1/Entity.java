@@ -43,7 +43,7 @@ public class Entity implements Entity_ {
 
     // Find in list an entity of name name, if it doesn't exist, create it
     // To that Entity add student and return the Entity.
-    public static Entity addTo(LinkedList<Entity> list, String entityName, Student student) {
+    private static Entity addTo(LinkedList<Entity> list, String entityName, Student student) {
         Iterator<Entity> iter = list.elements();
         while (iter.hasNext()) {
             Entity entity = iter.next();
@@ -59,7 +59,7 @@ public class Entity implements Entity_ {
         return newEntity;
     }
 
-    public static Course addTo(LinkedList<Course> list, String courseName, String courseNum, Student student) {
+    private static Course addTo(LinkedList<Course> list, String courseName, String courseNum, Student student) {
         Iterator<Course> iter = list.elements();
         while (iter.hasNext()) {
             Course course = iter.next();
