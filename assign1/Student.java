@@ -14,11 +14,23 @@ class Student implements Student_ {
     public static LinkedList<Student> studentList = new LinkedList<>();
 
     // Returns a Student object with given entryNumber, or null if it's not found
-    public static Student get(String entryNumber) {
+    public static Student getFromEntryNumber(String entryNumberOrName) {
         Iterator<Student> iter = studentList.elements();
         while (iter.hasNext()) {
             Student student = iter.next();
-            if (student.entryNo().equals(entryNumber)) {
+            if (student.entryNo().equals(entryNumberOrName)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    // Returns a Student object with given entryNumber, or null if it's not found
+    public static Student getFromName(String name) {
+        Iterator<Student> iter = studentList.elements();
+        while (iter.hasNext()) {
+            Student student = iter.next();
+            if (student.name().equals(name)) {
                 return student;
             }
         }
@@ -91,7 +103,7 @@ class Student implements Student_ {
         if (credits == 0) {
             cg = 0.0f;
         } else {
-            cg = gp / credits;
+            cg = ((float) gp) / credits;
         }
 
         return String.format("%.2f", cg);

@@ -20,7 +20,7 @@ public class Assignment1 {
             String grade = fileInput.getString();
             String courseName = fileInput.getLine();
 
-            Student student = Student.get(entryNumber);
+            Student student = Student.getFromEntryNumber(entryNumber);
             if (student == null) {
                 System.err.println("Student with entry number " + entryNumber + " not found");
                 System.exit(1);
@@ -40,7 +40,7 @@ public class Assignment1 {
     }
 
     private static String answerShareQuery(String entryNumber, String entityName) {
-        Student student = Student.get(entryNumber);
+        Student student = Student.getFromEntryNumber(entryNumber);
         if (student == null) {
             System.err.println("Student with entry number " + entryNumber + " not found");
             System.exit(1);
@@ -56,7 +56,10 @@ public class Assignment1 {
         Iterator<CourseGrade_> iter = student.courseList();
         while (iter.hasNext()) {
             CourseGrade courseGrade = (CourseGrade) iter.next();
-            if (courseGrade.coursenum().equals(entityName)) {
+            if (
+                courseGrade.coursenum().equals(entityName) || 
+                courseGrade.coursetitle().equals(entityName)
+            ) {
                 return courseGrade.courseShare(entryNumber);
             }
         }
@@ -79,11 +82,14 @@ public class Assignment1 {
         return "";
     }
 
-    public static String answerInfoQuery(String entryNumber) {
-        Student student = Student.get(entryNumber);
+    public static String answerInfoQuery(String entryNumberOrName) {
+        Student student = Student.getFromEntryNumber(entryNumberOrName);
         if (student == null) {
-            System.err.println("Student with entry number " + entryNumber + " not found");
-            System.exit(1);
+            student = Student.getFromName(entryNumberOrName);
+            if (student == null) {
+                System.err.println("Student with entry number or name " + entryNumberOrName + " not found");
+                System.exit(1);
+            }
         }
         String ret = String.format("%s %s %s %s %s ", 
             student.entryNo(),
@@ -113,7 +119,7 @@ public class Assignment1 {
             switch (queryType) {
                 case "SHARE": {
                     String entryNumber = fileInput.getString();
-                    String entityName = fileInput.getString();
+                    String entityName = fileInput.getLine();
                     String answer = answerShareQuery(entryNumber, entityName);
                     answers.add(answer);
                     break;
@@ -125,8 +131,8 @@ public class Assignment1 {
                     break;
                 }
                 case "INFO": {
-                    String entryNumber = fileInput.getString();
-                    String answer = answerInfoQuery(entryNumber);
+                    String entryNumberOrName = fileInput.getLine();
+                    String answer = answerInfoQuery(entryNumberOrName);
                     answers.add(answer);
                     break;
                 }

@@ -81,9 +81,9 @@ is doing.
     -- _static_ allStudents: list containing references to all student objects.
     -- courses:
         It is a SortedLinkedList of courses of the student, sorted by the course numbers.
-    -- _static_ get():
-        Iterates through the allStudents list looking for the entry number provided to
-        it and returns the reference. If not found, returns null.
+    -- _static_ getFromEntryNumber() and getFromName():
+        Iterate through the allStudents list looking for the entry number and name resp.
+        provided to it and returns the reference. If not found, returns null.
     -- constructor:
         Sets the required fields, adding data to allHostel and allDepartment lists. 
         Then adds the constructed student object to the allStudents list.
@@ -143,8 +143,9 @@ is doing.
         Takes in course number and searches Entity.coursesList for it. Returns the
         title of the course found. If course is not found, prints an error and exits.
     - answerInfoQuery:
-        Takes in entry number and finds a corresponding Student object for it. Returns
-        info of it in the required format. If not found, prints an error and exits.
+        Takes in entry number or name of student and finds a corresponding Student
+        object for it. Returns info of it in the required format. If not found, prints
+        an error and exits.
     - answerQueries:
         First determines the type of query and then calls the appropriate function.
         Returned strings are stored in a linked list and then printed in reverse.
