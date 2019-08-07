@@ -30,15 +30,6 @@ public class Assignment1 {
         }
     }
 
-    private static void printReverse(Iterator<String> iter) {
-        String next;
-        if (iter.hasNext()) {
-            next = iter.next();
-            printReverse(iter);
-            System.out.println(next);
-        }
-    }
-
     private static String answerShareQuery(String entryNumber, String entityName) {
         Student student = Student.getFromEntryNumber(entryNumber);
         if (student == null) {
@@ -113,7 +104,7 @@ public class Assignment1 {
 
     private static void answerQueries(String studentQueryFileName) {
         FileInput fileInput = new FileInput(studentQueryFileName);
-        LinkedList<String> answers = new LinkedList<>();
+        Stack<String> answers = new Stack<>();
         while (fileInput.moreAvailable()) {
             String queryType = fileInput.getString();
             switch (queryType) {
@@ -139,7 +130,10 @@ public class Assignment1 {
             }
         }
 
-        printReverse(answers.elements());
+        Iterator<String> iter = answers.elements();
+        while(iter.hasNext()) {
+            System.out.println(iter.next());
+        }
     }
 
     public static void main(String[] args) {

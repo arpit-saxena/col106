@@ -27,6 +27,14 @@ is doing.
         Uses the positions() method to iterate through the list and returns the number
         of elements in the list.
 
+-- Stack.java
+    Stack class extends the LinkedList class and overrides its add method to add the
+    new element in beginning. 
+    For doing it, we create a position object for that element. Next of that object is
+    set to wherever head was pointing and head is pointed to the newly created position
+    object. If the tail is null, which would imply the stack was previously empty, it
+    is also set to point to the new position object.
+
 -- SortedLinkedList.java
     SortedLinkedList, as the name suggests, is a linked list which is sorted wrt some
     sort of comparison defined. For this class, insertion is always made such that the
@@ -127,12 +135,6 @@ is doing.
         For the student record, creates a new Student with the parsed data.
         For each course file line, finds a student of the given entry number and adds
         the course to it. If student is not found, prints an error and exits.
-    - printReverse():
-        Takes in an iterator<String>. If the iterator has no next element, it exits.
-        Otherwise it stores it, and then calls itself with the iterator. Then prints
-        out the stored String in a line. So, a string is printed after all the strings
-        next to it in the sequence are printed. So, the strings of the Iterator are
-        printed in reverse, one in each line.
     - answerShareQuery:
         Takes in entry number and entity name.
         Finds a student with the given entry number. Compares the name of entity with
@@ -148,7 +150,8 @@ is doing.
         an error and exits.
     - answerQueries:
         First determines the type of query and then calls the appropriate function.
-        Returned strings are stored in a linked list and then printed in reverse.
+        Returned strings are stored in a stack, so they are printed in an order which
+        is reverse to what order the queries were posed.
     - main:
         Checks if there are correct number of arguments. If not, prints the expected
         format and exits. Otherwise, calls getData and answerQueries with appropriate
