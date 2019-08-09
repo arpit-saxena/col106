@@ -1,13 +1,15 @@
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class FileInput {
-    FileReader fileReader;
+    BufferedReader bufferedReader;
 
     public FileInput(String fileName) {
         try {
-            fileReader = new FileReader(fileName);
+            FileReader fileReader = new FileReader(fileName);
+            bufferedReader = new BufferedReader(fileReader);
         } catch (FileNotFoundException fe) {
             System.out.println("File " + fileName + " not found.");
             System.exit(1);
@@ -16,7 +18,7 @@ public class FileInput {
 
     public char getChar() {
         try {
-            return (char) fileReader.read();
+            return (char) bufferedReader.read();
         } catch (IOException ex) {
             System.out.println("Encountered exception: " + ex.getMessage());
             System.exit(1);
@@ -46,7 +48,7 @@ public class FileInput {
         String ret = "";
         char ch = getChar();
 
-        while (ch != '\n') {
+        while (ch != '\n' && moreAvailable()) {
             ret += ch;
             ch = getChar();
         }
@@ -56,7 +58,7 @@ public class FileInput {
 
     public boolean moreAvailable() {
         try {
-            return fileReader.ready();
+            return bufferedReader.ready();
         } catch (IOException ex) {
             System.out.println("Exception: " + ex.getMessage());
             System.exit(1);
@@ -66,7 +68,7 @@ public class FileInput {
 
     public void close() {
         try {
-            fileReader.close();
+            bufferedReader.close();
         } catch (IOException ex) {
             System.err.println("Exception: " + ex.getMessage());
             System.exit(1);

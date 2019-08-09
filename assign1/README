@@ -110,7 +110,8 @@ is doing.
 
 -- FileInput.java 
     Defines a class FileInput which has basic utilities to get data from files.
-    Internally, it uses a fileReader which reads the file line by line.
+    Internally, it uses a BufferedReader on a FileReader which stores the file in a buffer
+    and then the program reads the buffer character by character
     -- constructor:
         Takes in a file name, and makes a FileReader object with it. If the file doesn't
         exist, it prints so to STDERR and exits.
