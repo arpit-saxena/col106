@@ -13,7 +13,7 @@
 2014cs1535 COL203 I Cryptography
 2014an2817 COL106 A Data Structures and Algorithms
 2014cs4235 COL106 A Data Structures and Algorithms
-2014cs4235 COL113 A Cryptography
+2014cs4235 COL113 A Distributed Systems
 2015an2117 COL106 B Data Structures and Algorithms
 2015cs1325 COL203 B Cryptography
 2015cs1285 COL106 Bminus Data Structures and Algorithms
