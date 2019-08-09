@@ -141,14 +141,14 @@ is doing.
         Finds a student with the given entry number. Compares the name of entity with
         names of its hostel, department and then with the course number of all it's
         courses. If found, calls the found entity's sharedWith method and returns the
-        result. If no such entity is found, prints to STDERR and exits.
+        result. If no such entity is found, returns a blank string.
     - answerCourseTitleQuery:
         Takes in course number and searches Entity.coursesList for it. Returns the
-        title of the course found. If course is not found, prints an error and exits.
+        title of the course found. If course is not found, returns a blank string.
     - answerInfoQuery:
         Takes in entry number or name of student and finds a corresponding Student
-        object for it. Returns info of it in the required format. If not found, prints
-        an error and exits.
+        object for it. Returns info of it in the required format. If not found,
+        returns a blank string.
     - answerQueries:
         First determines the type of query and then calls the appropriate function.
         Returned strings are stored in a stack, so they are printed in an order which

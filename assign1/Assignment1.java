@@ -33,8 +33,7 @@ public class Assignment1 {
     private static String answerShareQuery(String entryNumber, String entityName) {
         Student student = Student.getFromEntryNumber(entryNumber);
         if (student == null) {
-            System.err.println("Student with entry number " + entryNumber + " not found");
-            System.exit(1);
+            return "";
         }
         if (student.hostel().equals(entityName)) {
             return student.hostelShare();
@@ -55,8 +54,6 @@ public class Assignment1 {
             }
         }
 
-        System.err.println("Entity " + entityName + " not found");
-        System.exit(1);
         return "";
     }
 
@@ -68,8 +65,6 @@ public class Assignment1 {
                 return String.format("%s", course.name());
             }
         }
-        System.err.println("Course " + courseNum + " not found");
-        System.exit(1);
         return "";
     }
 
@@ -78,8 +73,7 @@ public class Assignment1 {
         if (student == null) {
             student = Student.getFromName(entryNumberOrName);
             if (student == null) {
-                System.err.println("Student with entry number or name " + entryNumberOrName + " not found");
-                System.exit(1);
+                return "";
             }
         }
         String ret = String.format("%s %s %s %s %s ", 
