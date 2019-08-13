@@ -1,3 +1,5 @@
+ENTRY=2018MT10742
+
 compile:
 	javac Bases.java
 	javac Node.java
@@ -15,8 +17,8 @@ clean:
 	rm *.class
 
 handin:	
-	@mkdir src
+	@mkdir -p src
 	@cp *.java src/
 	@zip -r $(ENTRY)_assignment2.zip src/
 	@base64 $(ENTRY)_assignment2.zip > $(ENTRY)_assignment2.zip.b64
-	#@rm $(ENTRY)_assignment2.zip
+	@rm $(ENTRY)_assignment2.zip
