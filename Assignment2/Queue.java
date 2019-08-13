@@ -1,16 +1,15 @@
 // This class implements the Queue
 public class Queue<V> implements QueueInterface<V>{
-    private Object[] queue;
+    private NodeBase<V>[] queue;
     private int capacity, currentSize, front, rear;
 
     // currentSize = 0 => Next element is to be added at rear
     // else, next element is to be added at rear + 1
 
-    //TODO: Check if it's fine to change type of queue
-
+    @SuppressWarnings("unchecked")
     public Queue(int capacity) {
         this.capacity = capacity;
-        queue = new Object[capacity];
+        queue = new NodeBase[capacity];
         currentSize = 0;
         front = rear = 0; 
     }
@@ -44,14 +43,13 @@ public class Queue<V> implements QueueInterface<V>{
         currentSize++;
     }
 
-    @SuppressWarnings("unchecked")
     public NodeBase<V> dequeue() {
         if (isEmpty()) {
             System.err.println("dequeue called on empty queue");
             return null;
         }
 
-        NodeBase<V> ret = (NodeBase<V>) queue[front];
+        NodeBase<V> ret = queue[front];
         currentSize--;
         if (currentSize != 0) {
             front = (front + 1) % capacity;

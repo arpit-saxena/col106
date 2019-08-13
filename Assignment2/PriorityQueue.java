@@ -1,15 +1,14 @@
 
 public class PriorityQueue<V> implements QueueInterface<V> {
 
-    private Object[] queue;
+    private NodeBase<V>[] queue;
     private int capacity, currentSize;
     private int front, rear;
 
-    //TODO: Check if it's fine to change type of queue
-
+    @SuppressWarnings("unchecked")
     public PriorityQueue(int capacity) {
         this.capacity = capacity;
-        queue = new Object[capacity];
+        queue = new NodeBase[capacity];
         currentSize = 0;
         front = rear = 0; 
     }
@@ -40,11 +39,6 @@ public class PriorityQueue<V> implements QueueInterface<V> {
         }
 
         currentSize++;
-        /* for (int i = 0; i < currentSize; i++) {
-            NodeBase<V> nn = (NodeBase<V>) queue[(front + i) % currentSize];
-            System.out.print(nn.getPriority() + " ");
-        }
-        System.out.println(); */
     }
 
     public void add(int priority, V value) {
@@ -53,18 +47,17 @@ public class PriorityQueue<V> implements QueueInterface<V> {
 
     // In case of priority queue, the dequeue() should
     // always remove the element with minimum priority value
-    @SuppressWarnings("unchecked")
     public NodeBase<V> dequeue() {
         if (isEmpty()) {
             System.err.println("dequeue called on empty queue");
             return null;
         }
 
-        NodeBase<V> ret = (NodeBase<V>) queue[front];
+        NodeBase<V> ret = queue[front];
         int minPriority = ret.getPriority();
         int indexRet = front;
         for(int i = 1; i < currentSize; i++) {
-            NodeBase<V> curr = (NodeBase<V>) queue[(front + i) % capacity];
+            NodeBase<V> curr = queue[(front + i) % capacity];
             if (curr.getPriority() < minPriority) {
                 ret = curr;
                 minPriority = curr.getPriority();
@@ -78,12 +71,6 @@ public class PriorityQueue<V> implements QueueInterface<V> {
             queue[indexRet] = queue[rear];
             rear = (rear + capacity - 1) % capacity;
         }
-
-        /* for (int i = 0; i < currentSize; i++) {
-            NodeBase<V> nn = (NodeBase<V>) queue[(front + i) % currentSize];
-            System.out.print(nn.getPriority() + " ");
-        }
-        System.out.println(); */
 
         return ret;
     }
