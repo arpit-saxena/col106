@@ -59,8 +59,6 @@ public class Assignment2Driver {
 		Condition empty = lock.newCondition();
 		int iteration = itemcount / a_driver.numBuyers; // No. of purchases each buyer make
 
-		// TODO Create multiple Buyer and Seller Threads and start them.
-		// ...
 		for (Seller<Item> seller: sellers) {
 			seller = new Seller<Item>(
 				a_driver.sellerSleepTime,
