@@ -1,0 +1,28 @@
+Assignment 2, COL106, Semester 1 2019-20
+Arpit Saxena, 2018MT10742
+
+Documentation is divided into the classes (and their methods) that we had to implement and only includes explanation for the code I have written.
+
+-- Node 
+    A node is basically a tuple of priority and value. getPriority() and getValue() simply return the private priority and value variables.
+
+-- Queue
+    Implementation is done by using the array as a circular queue. currentSize stores how big the queue currently is. front and rear store the indices of the first and last element of the queue, except when currentSize is 0, in which case they store the position at which the next element would be added. 
+    If rear >- front, then the elements (in order) are given by queue[front..rear]. Otherwise, they're given by queue[front..capacity-1] {union} queue[0..rear]
+    An error is printed if enqueue is called on a full queue or if dequeue is called on an already full queue. Nothing is removed or added in these cases.
+
+-- PriorityQueue
+    PriorityQueue's Implementation is very similar to that of Queue except the dequeuing. While in queue, the element at the front is returned, front is increased by 1 and currentSize is decreased by 1. In PriorityQueue, a linear search is made through the elements to find the one which is most prior. This element is stored as a temporary variable, and the element at the beginning inserted in its place. Then, front is increased by 1, currentSize decreased by 1 and the temporary variable returned. 
+    We note that this works mainly because in a priority queue, order of insertion of elements does not matter, because only the most prior element will be dequeued first. So, we can reorder the elements internally.
+
+-- Buyer
+    The constructor just sets private variables and calls required methods of BuyerBase
+    buy() method first obtains the lock. The lock is common to both the seller and buyer threads and all transactions are made only after acquiring the lock. After acquiring the lock, await method of Condition empty is called (which is signalled by the seller threads when the catalog is not empty). After that, an element is dequeued (and consumed). After that, full Condition is signalled (full condition is signalled when the catalog is not full, which it definitely can't be after a buyer has consumed an item). Then, in the finally block (which is guaranteed to execute), the lock is released.
+
+-- Seller
+    The constructor sets private variables and calls required methods of SellerBase.
+    sell() method does nothing if the inventory is empty. This is because now the seller has nothing to sell. Then, the lock is acquired. After acquiring the lock, await method of Condition full is called (which is signalled by the buyer threads when catalog is not full). This is done in a while loop, ensuring that catalog really isn't full when full is signalled, to protect from spurious wakeups. After this, if the inventory is empty (which it might've become if another seller thread was given control before this one). If it is empty, the method returns (note that finally block is still executed). Then, a node is dequeued from the inventory and enqueued to the catalog. After this, empty is signalled (as the catalog is definitely not empty after this). In the finally block, the lock is released.
+
+-- Assignment2Driver
+    After reading the data from files, which has been put into an ArrayList, the node's are enqueued in a_driver.inventory which is a Queue. 
+    At the end of the main method, seller and buyer threads are instantiated, started and assigned to their appropriate arrays.
