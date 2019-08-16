@@ -25,9 +25,7 @@ public class Buyer<V> extends BuyerBase<V> {
             System.out.print("Consumed "); // DO NOT REMOVE (For Automated Testing)
             n.show(); // DO NOT REMOVE (For Automated Testing)
 
-            if (!catalog.isFull()) {
-                /*not*/full.signalAll();
-            }
+            /*not*/full.signalAll();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
