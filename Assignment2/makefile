@@ -22,3 +22,4 @@ handin:
 	@zip -r $(ENTRY)_assignment2.zip src/
 	@base64 $(ENTRY)_assignment2.zip > $(ENTRY)_assignment2.zip.b64
 	@rm $(ENTRY)_assignment2.zip
+	@rm -r src
