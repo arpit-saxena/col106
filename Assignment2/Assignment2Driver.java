@@ -59,8 +59,8 @@ public class Assignment2Driver {
 		Condition empty = lock.newCondition();
 		int iteration = itemcount / a_driver.numBuyers; // No. of purchases each buyer make
 
-		for (Seller<Item> seller: sellers) {
-			seller = new Seller<Item>(
+		for (int i = 0; i < sellers.length; i++) {
+			Seller<Item> seller = new Seller<Item>(
 				a_driver.sellerSleepTime,
 				a_driver.catalogSize,
 				lock,
@@ -70,10 +70,11 @@ public class Assignment2Driver {
 				a_driver.inventory
 			);
 			new Thread(seller).start();
+			sellers[i] = seller;
 		}
 
-		for (Buyer<Item> buyer: buyers) {
-			buyer = new Buyer<Item>(
+		for (int i = 0; i < buyers.length; i++) {
+			Buyer<Item> buyer = new Buyer<Item>(
 				a_driver.buyerSleepTime,
 				a_driver.catalogSize,
 				lock,
@@ -83,6 +84,7 @@ public class Assignment2Driver {
 				iteration
 			);
 			new Thread(buyer).start();
+			buyers[i] = buyer;
 		}
 	}
 }
