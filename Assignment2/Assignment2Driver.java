@@ -52,14 +52,14 @@ public class Assignment2Driver {
 
 		Seller[] sellers = new Seller[a_driver.numSellers];
 		Buyer[] buyers = new Buyer[a_driver.numBuyers];
-		PriorityQueue<Item> queue = new PriorityQueue<Item>(a_driver.catalogSize); //TODO: edited this line
+		PriorityQueue<Node<Item>> queue = new PriorityQueue<Node<Item>>(a_driver.catalogSize);
 		Lock lock = new ReentrantLock(true);
 		Condition full = lock.newCondition();
 		Condition empty = lock.newCondition();
 		int iteration = itemcount / a_driver.numBuyers; // No. of purchases each buyer make
 
 		for (int i = 0; i < sellers.length; i++) {
-			Seller<Item> seller = new Seller<Item>(
+			Seller seller = new Seller(
 				a_driver.sellerSleepTime,
 				a_driver.catalogSize,
 				lock,
@@ -73,7 +73,7 @@ public class Assignment2Driver {
 		}
 
 		for (int i = 0; i < buyers.length; i++) {
-			Buyer<Item> buyer = new Buyer<Item>(
+			Buyer buyer = new Buyer(
 				a_driver.buyerSleepTime,
 				a_driver.catalogSize,
 				lock,
