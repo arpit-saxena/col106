@@ -1,0 +1,36 @@
+2015an2632 COL106 A Data Structures and Algorithms
+2013cs1535 MEL110 C Graphic Science
+2014cs4235 COL211 D Computer Architecture
+2015an2887 COL106 Aminus Data Structures and Algorithms
+2015cs1325 COL302 F Programming Languages
+2015an2117 MEL110 I Graphic Science
+2015cs1285 COL302 E Programming Languages
+2014an2817 COL106 Bminus Data Structures and Algorithms
+2014an2117 COL211 C Computer Architecture
+2015cs1540 COL302 A Programming Languages
+2014an1540 COL106 Aminus Data Structures and Algorithms
+2014cs1235 COL211 C Computer Architecture
+2014cs1544 COL211 D Computer Architecture
+2014an1117 COL106 E Data Structures and Algorithms
+2015cs2622 MEL110 F Graphic Science
+2013cs1285 COL106 B Data Structures and Algorithms
+2015cs2662 COL302 Bminus Programming Languages
+2015an2112 COL211 Cminus Computer Architecture
+2014cs1524 COL106 D Data Structures and Algorithms
+2013cs1535 COL211 A Computer Architecture
+2015an2877 COL302 B Programming Languages
+2014an1510 COL106 Cminus Data Structures and Algorithms
+2014cs1237 COL302 E Programming Languages
+2013an2117 MEL110 I Graphic Science
+2015an2362 COL106 F Data Structures and Algorithms
+2013cs4435 COL302 A Programming Languages
+2014cs2635 COL211 C Computer Architecture
+2013cs4235 COL106 D Data Structures and Algorithms
+2014an1717 MEL110 B Graphic Science
+2014an1640 COL302 Aminus Programming Languages
+2014cs4233 COL106 F Data Structures and Algorithms
+2013an2887 COL211 E Computer Architecture
+2015cs3325 MEL110 E Graphic Science
+2015an2227 COL302 Bminus Programming Languages
+2015cs1510 COL106 B Data Structures and Algorithms
+2014an1540 COL302 B Programming Languages
