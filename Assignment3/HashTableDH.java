@@ -51,7 +51,6 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
         if (count == hashTableSize) {
             System.err.println("Hash Table full");
             return -1;
-            System.exit(-1);
         }
 
         table[index] = new Node<K, T>(key, obj);
