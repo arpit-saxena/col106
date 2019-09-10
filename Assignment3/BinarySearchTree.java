@@ -121,20 +121,36 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         }
 
         NodeBST<K, V> curr = root;
+        NodeBST<K, V> parent = null; // parent = null <=> curr = root
         while (true) {
             int comparisonResult = curr.key.compareTo(key);
             count++; // Touched curr
             if (comparisonResult > 0) { // curr.key > key
                 if (curr.left == null) return -1;
+                parent = curr;
                 curr = curr.left;
             } else {
                 if (curr.key.equals(key)) break; // Found!
                 if (curr.right == null) return -1;
+                parent = curr;
                 curr = curr.right;
             }
         }
         
         NodeBST<K, V> nodeToDelete = curr;
+
+        if (nodeToDelete.left == null && nodeToDelete.right == null) { // Have to delete a leaf node
+            if (parent == null) { // => Have to delete root
+                root = null;
+            } else if (parent.left == nodeToDelete) {
+                parent.left = null;
+            } else if (parent.right == nodeToDelete) {
+                parent.right = null;
+            } else {
+                System.err.println("parent of nodeToDelete does not have it as child");
+            }
+            return count;
+        }
 
         NodeBST<K, V> replacementNode; // The node that will take the place of deleted node
         if (nodeToDelete.right == null) {
@@ -142,7 +158,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         } else { // nodeToDelete.right != null
             // Find the leftmost node of right subtree of nodeToDelete
             
-            NodeBST<K, V> parent = nodeToDelete; // parent of curr
+            parent = nodeToDelete; // parent of curr
             curr = nodeToDelete.right;
             while (true) {
                 count++; // Will touch curr in the next if condition
