@@ -49,7 +49,7 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
         }
 
         if (count == hashTableSize) {
-            System.err.println("Hash Table full");
+            //System.err.println("Hash Table full");
             return -1;
         }
 
@@ -78,12 +78,12 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
                 index = (hash1 + count * hash2) % hashTableSize;
                 count++;
             } else {
-                System.err.println("Element not found");
+                //System.err.println("Element not found");
                 return -1;
             }
         }
 
-        System.err.println("Element not found. Exceeded size of table");
+        //System.err.println("Element not found. Exceeded size of table");
         return -1;
     }
 
@@ -100,8 +100,8 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
                 table[index] == null ||
                 table[index].pair == null && !table[index].checkFurther
             ){
-                System.err.println("Element to be deleted not found in table");
-                return count;
+                //System.err.println("Element to be deleted not found in table");
+                return -1;
             }
 
             if (table[index].pair == null) { // => table[index].checkFurther
@@ -118,7 +118,7 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
                 count++;
                 continue;
             } else {
-                System.err.println("Element to be deleted not found in table");
+                //System.err.println("Element to be deleted not found in table");
                 break;
             }
         }
@@ -128,11 +128,11 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
         // Updating the previous checkFurther links
         // count == 1 would imply there's nothing previous to this
         // So we need to find previous till count == 2
-        while (count > 1 && !table[index].checkFurther && table[index].pair == null) {
+        /* while (count > 1 && !table[index].checkFurther && table[index].pair == null) {
             index = (index - hash2 + hashTableSize) % hashTableSize;
             table[index].checkFurther = false;
             count--;
-        }
+        } */
 
         return ret;
     }
