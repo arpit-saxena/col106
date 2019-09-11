@@ -155,6 +155,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
         NodeBST<K, V> replacementNode; // The node that will take the place of deleted node
         if (nodeToDelete.right == null) {
             replacementNode = nodeToDelete.left;
+            nodeToDelete.value = replacementNode.value;
+            nodeToDelete.key = replacementNode.key;
+            nodeToDelete.left = replacementNode.left;
+            nodeToDelete.right = replacementNode.right;
         } else { // nodeToDelete.right != null
             // Find the leftmost node of right subtree of nodeToDelete
             
@@ -174,10 +178,10 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
             } else { // parent's left child is to be deleted
                 parent.left = replacementNode.right;
             }
+
+            nodeToDelete.value = replacementNode.value;
         }
 
-        nodeToDelete.value = replacementNode.value;
-        nodeToDelete.key = replacementNode.key;
         return count;
     }
 }
