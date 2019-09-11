@@ -115,54 +115,43 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 
     public int delete(K key) {
         int count = 0;
+        if (root == null) return -1;
 
-        if (root == null) {
-            return -1; // Not found
-        }
-
+        // Finding the node to delete
         NodeBST<K, V> curr = root;
         NodeBST<K, V> parent = null; // parent = null <=> curr = root
         while (true) {
-            int comparisonResult = curr.key.compareTo(key);
-            count++; // Touched curr
-            if (comparisonResult > 0) { // curr.key > key
+            int comparisonResult = key.compareTo(curr.key);
+            count++; //touched curr
+            if (comparisonResult < 0) { // key < curr.key
                 if (curr.left == null) return -1;
                 parent = curr;
                 curr = curr.left;
             } else {
-                if (curr.key.equals(key)) break; // Found!
+                if (key.equals(curr.key)) break;
                 if (curr.right == null) return -1;
                 parent = curr;
                 curr = curr.right;
             }
         }
-        
+
+        // assert: curr.key equals key.
+        // So we have to delete curr
         NodeBST<K, V> nodeToDelete = curr;
 
-        if (nodeToDelete.left == null && nodeToDelete.right == null) { // Have to delete a leaf node
-            if (parent == null) { // => Have to delete root
-                root = null;
-            } else if (parent.left == nodeToDelete) {
-                parent.left = null;
-            } else if (parent.right == nodeToDelete) {
-                parent.right = null;
-            } else {
-                System.err.println("parent of nodeToDelete does not have it as child");
-            }
-            return count;
-        }
-
-        NodeBST<K, V> replacementNode; // The node that will take the place of deleted node
         if (nodeToDelete.right == null) {
-            replacementNode = nodeToDelete.left;
-            nodeToDelete.value = replacementNode.value;
-            nodeToDelete.key = replacementNode.key;
-            nodeToDelete.left = replacementNode.left;
-            nodeToDelete.right = replacementNode.right;
-        } else { // nodeToDelete.right != null
-            // Find the leftmost node of right subtree of nodeToDelete
-            
-            parent = nodeToDelete; // parent of curr
+            if (parent == null) { // => curr = nodeToDelete = root
+                root = nodeToDelete.left;
+            } else if (parent.right == nodeToDelete) {
+                parent.right = nodeToDelete.left;
+            } else if (parent.left == nodeToDelete) {
+                parent.left = nodeToDelete.left;
+            } else {
+                System.err.println("Parent not the parent of nodeToDelete");
+            }
+        } else {
+            // Finding successor of nodeToDelete. Using curr & parent for this
+            parent = nodeToDelete;
             curr = nodeToDelete.right;
             while (true) {
                 count++; // Will touch curr in the next if condition
@@ -171,15 +160,21 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
                 curr = curr.left;
             }
 
-            replacementNode = curr;
+            // Assert: curr.left == null => curr is the successor of nodeToDelete
+            NodeBST<K, V> replacementNode = curr;
+            NodeBST<K, V> replacementNodeParent = parent;
+            nodeToDelete.key = replacementNode.key;
+            nodeToDelete.value = replacementNode.value;
+            count++;
 
-            if (parent == nodeToDelete) { // parent's right child is to be deleted
-                parent.right = replacementNode.right;
-            } else { // parent's left child is to be deleted
-                parent.left = replacementNode.right;
+            if (replacementNodeParent.right == replacementNode) {
+                replacementNodeParent.right = replacementNode.right;
+            } else if (replacementNodeParent.left == replacementNode) {
+                replacementNodeParent.left = replacementNode.right;
+            } else {
+                System.err.println("curr is not a child of parent.. Unexpected!!");
             }
 
-            nodeToDelete.value = replacementNode.value;
         }
 
         return count;
