@@ -153,6 +153,8 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
             // Finding successor of nodeToDelete. Using curr & parent for this
             parent = nodeToDelete;
             curr = nodeToDelete.right;
+            count--; // Next loop counts touching curr again, which has already been
+                     // counted, so decreasing it once
             while (true) {
                 count++; // Will touch curr in the next if condition
                 if (curr.left == null) break;
