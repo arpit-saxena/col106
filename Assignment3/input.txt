@@ -1,11 +1,11 @@
-insert Kapil Singh Nilgiri CS 6.5
-insert Chunky Singh Nilgiri CE 6.0
-insert Shyam Singh Satpura EE 8.2
-update Chunky Singh Nilgiri CE 5.0
-delete Kapil Singh
-contains Kapil Singh
-get Shyam Singh
-address Shyam Singh
-address Waah Sankalp
-address Kapil Singh
-delete Shyam Singh
+insert Janaardan Bhartiya Nilgiri CS 6.5
+insert Shoukat Ismaail Nilgiri CS 6.5
+insert Jack Nicholson Nilgiri CS 6.5
+insert Kallu Yadav Nilgiri CS 6.5
+insert Tunni Bai Kailash CS 6.5
+insert Tillu Yadav Nilgiri CS 6.5
+address Kallu Yadav
+update Tunni Bai Kailash CS 6.8
+delete Shoukat Ismaail
+address Kallu Yadav
+get Shoukat Ismaail

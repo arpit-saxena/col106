@@ -1,42 +1,31 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 public class Tester {
     public static void main(String[] args) throws Exception {
-        /* System.out.println(HashFunctions.djb2("KalluYadav", 5));
-        System.out.println(HashFunctions.djb2("TilluYadav", 5));
-        System.out.println(HashFunctions.djb2("ShyaamSingh", 5)); */
-        
-        /* System.out.println(HashFunctions.djb2("JanardanBhartiya", 5));
-        System.out.println(HashFunctions.djb2("ShoukatIsmaail", 5));
-        System.out.println(HashFunctions.djb2("JackNicholson", 5));
-        System.out.println(HashFunctions.djb2("KalluYadav", 5));
-        System.out.println(HashFunctions.djb2("TunniBai", 5));
-        System.out.println(HashFunctions.djb2("TilluYadav", 5)); */
-        
-        BinarySearchTree<Integer, Integer> bst = new BinarySearchTree<>();
-        System.out.println(bst.insert(8, 8));
-        System.out.println(bst.insert(6, 6));
-        System.out.println(bst.insert(10, 10));
-        System.out.println(bst.insert(2, 2));
-        System.out.println(bst.insert(7, 7));
-        System.out.println(bst.insert(9, 9));
-        System.out.println(bst.insert(20, 20));
-        System.out.println(bst.insert(1, 1));
-        System.out.println(bst.insert(4, 4));
-        System.out.println(bst.insert(5, 5));
-        System.out.println(bst.insert(15, 15));
-        System.out.println(bst.insert(17, 17));
-        System.out.println();
-        System.out.println(bst.delete(10));
-        System.out.println();
-        System.out.println(bst.address(1));
-        System.out.println(bst.address(2));
-        System.out.println(bst.address(4));
-        System.out.println(bst.address(5));
-        System.out.println(bst.address(6));
-        System.out.println(bst.address(7));
-        System.out.println(bst.address(8));
-        System.out.println(bst.address(9));
-        System.out.println(bst.address(15));
-        System.out.println(bst.address(17));
-        System.out.println(bst.address(20));
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new FileReader("first-last-name.txt"));
+        } catch (Exception e) {
+            System.err.print("File not found: first-last-name.txt");
+            System.exit(1);
+        }
+
+        String line = bufferedReader.readLine();
+        int a = 1, b = 1;
+        int size = 53;
+        String[] arr = new String[1653];
+        while (line != null) {
+            String[] name = line.split(" ");
+            String nameConcat = name[0] + name[1];
+            int h1 = (int) HashFunctions.djb2(nameConcat, size);
+            int h2 = (int) HashFunctions.sdbm(nameConcat, size);
+            /* System.out.println(h1 + " " + h2); */
+            if (h1 == a) {
+                System.out.println(name[0] + " " + name[1]);
+                a++;
+            }
+            line = bufferedReader.readLine();
+        }
     }
 }
