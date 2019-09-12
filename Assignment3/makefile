@@ -8,7 +8,8 @@ clean:
 
 handin:	
 	@mkdir -p src
-	@cp *.java src/
+	@cp *.java README.txt src/
+	@rm src/Tester.java
 	@zip -r $(ENTRY)_assignment3.zip src/
 	@base64 $(ENTRY)_assignment3.zip > $(ENTRY)_assignment3.zip.b64
 	@rm $(ENTRY)_assignment3.zip
