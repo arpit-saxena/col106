@@ -43,6 +43,9 @@ public class HashTableDH<K, T> implements MyHashTable_<K, T>{
         int index = hash1;
         int count = 1; // Count for calculating the hash function
         while (count < hashTableSize && table[index] != null) { // If count reaches hashTableSize, table is full
+            if (table[index].key().equals(key)) {
+                return -1;
+            }
             table[index].checkFurther = true;
             index = (hash1 + count * hash2) % hashTableSize; 
             count++;

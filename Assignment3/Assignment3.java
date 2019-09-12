@@ -49,7 +49,11 @@ public class Assignment3 {
                     );
 
                     int res = hashTable.insert(key, student);
-                    System.out.println(res);
+                    if (res == -1) {
+                        System.out.println("E");
+                    } else {
+                        System.out.println(res);
+                    }
                     break;
                 }
                 case "update": {

@@ -33,6 +33,11 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
             // Since the structure is a tree, we are guaranteed to hit a leaf
             // where this loop would perform the insertion and exit
             while (true) {
+                // Can't have duplicate keys in the BST
+                if (curr.key.equals(key)) {
+                    return -1;
+                }
+
                 int comparisonResult = curr.key.compareTo(key);
                 count++; // Touched curr
                 if (comparisonResult > 0) { // curr.key > key
