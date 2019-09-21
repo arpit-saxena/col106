@@ -36,12 +36,12 @@ trieclean:
 	-@rm Trie/*.class -f
 
 rbtreebuild:
-	@echo "\n**********"
+	@echo -e "\n**********"
 	@echo "Building Red-Black Tree"
 	@echo "**********"
 	@$(JAVAC) -encoding ISO-8859-1 RedBlack/*.java
 rbtreecheck: rbtreebuild
-	@echo "\n**********"
+	@echo -e "\n**********"
 	@echo "Checking Red-Black"
 	@echo "**********"
 	@$(JAVA) RedBlack.RedBlackDriverCode RedBlack/$(INPUT_FILE) >RedBlack/tmp
@@ -51,12 +51,12 @@ rbtreeclean:
 	-@rm RedBlack/*.class -f
 
 pqbuild:
-	@echo "\n**********"
+	@echo -e "\n**********"
 	@echo "Building PriorityQueue"
 	@echo "**********"
 	@$(JAVAC) -encoding ISO-8859-1 PriorityQueue/*.java
 pqcheck: pqbuild
-	@echo "\n**********"
+	@echo -e "\n**********"
 	@echo "Checking PriorityQueue"
 	@echo "**********"
 	@$(JAVA) PriorityQueue.PriorityQueueDriverCode PriorityQueue/$(INPUT_FILE) >PriorityQueue/tmp
@@ -66,12 +66,12 @@ pqclean:
 	-@rm PriorityQueue/*.class -f
 
 pmbuild:
-	@echo "\n**********"
+	@echo -e "\n**********"
 	@echo "Building ProjectManagement"
 	@echo "**********"
 	@$(JAVAC) -encoding ISO-8859-1 ProjectManagement/*.java
 pmcheck: pmbuild
-	@echo "\n**********"
+	@echo -e "\n**********"
 	@echo "Checking ProjectManagement"
 	@echo "**********"
 	@$(JAVA) ProjectManagement.Scheduler_Driver ProjectManagement/$(INPUT_FILE) >ProjectManagement/tmp
