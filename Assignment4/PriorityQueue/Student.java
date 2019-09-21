@@ -16,10 +16,15 @@ public class Student implements Comparable<Student> {
      */
     @Override
     public int compareTo(Student student) {
-        return student.marks - this.marks;
+        return this.marks - student.marks;
     }
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{name=\'" + name + "\', marks=" + marks + "}";
     }
 }
