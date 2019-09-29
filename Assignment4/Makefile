@@ -30,7 +30,8 @@ triecheck: triebuild
 	@echo "Checking Trie"
 	@echo "**********"
 	@$(JAVA) Trie.TrieDriverCode Trie/$(INPUT_FILE) >Trie/tmp
-	@cmp --silent Trie/tmp Trie/$(EXPECTED_OUTPUT_FILE) && echo 'TRIE SUCCESS'  || $(call logtrieerror)
+	@cd Trie &&	sed -i 's/[^[:print:]]//g' tmp &&	sed -i 's/[^[:print:]]//g' $(EXPECTED_OUTPUT_FILE)
+	@diff -i Trie/tmp Trie/$(EXPECTED_OUTPUT_FILE) && echo 'TRIE SUCCESS'  || $(call logtrieerror)
 trieclean:
 	-@rm Trie/tmp -f
 	-@rm Trie/*.class -f
@@ -45,7 +46,8 @@ rbtreecheck: rbtreebuild
 	@echo "Checking Red-Black"
 	@echo "**********"
 	@$(JAVA) RedBlack.RedBlackDriverCode RedBlack/$(INPUT_FILE) >RedBlack/tmp
-	@cmp --silent RedBlack/tmp RedBlack/$(EXPECTED_OUTPUT_FILE) && echo 'RBTREE SUCCESS' || $(call logrberror)
+	@cd RedBlack && sed -i 's/[^[:print:]]//g' tmp && sed -i 's/[^[:print:]]//g' $(EXPECTED_OUTPUT_FILE)
+	@diff -i RedBlack/tmp RedBlack/$(EXPECTED_OUTPUT_FILE) && echo 'RBTREE SUCCESS' || $(call logrberror)
 rbtreeclean:
 	-@rm RedBlack/tmp -f 
 	-@rm RedBlack/*.class -f
@@ -60,7 +62,8 @@ pqcheck: pqbuild
 	@echo "Checking PriorityQueue"
 	@echo "**********"
 	@$(JAVA) PriorityQueue.PriorityQueueDriverCode PriorityQueue/$(INPUT_FILE) >PriorityQueue/tmp
-	@cmp --silent PriorityQueue/tmp PriorityQueue/$(EXPECTED_OUTPUT_FILE) && echo 'PQ SUCCESS' || $(call logpqerror)
+	@cd PriorityQueue  && sed -i 's/[^[:print:]]//g' tmp && sed -i 's/[^[:print:]]//g' $(EXPECTED_OUTPUT_FILE)
+	@diff -i PriorityQueue/tmp PriorityQueue/$(EXPECTED_OUTPUT_FILE) && echo 'PQ SUCCESS' || $(call logpqerror)
 pqclean:
 	-@rm PriorityQueue/tmp -f
 	-@rm PriorityQueue/*.class -f
@@ -75,7 +78,8 @@ pmcheck: pmbuild
 	@echo "Checking ProjectManagement"
 	@echo "**********"
 	@$(JAVA) ProjectManagement.Scheduler_Driver ProjectManagement/$(INPUT_FILE) >ProjectManagement/tmp
-	@cmp --silent ProjectManagement/tmp ProjectManagement/$(EXPECTED_OUTPUT_FILE) && echo 'PM SUCCESS' || $(call logpmerror)
+	@cd ProjectManagement && sed -i 's/[^[:print:]]//g' tmp && sed -i 's/[^[:print:]]//g' $(EXPECTED_OUTPUT_FILE)
+	@diff -i ProjectManagement/tmp ProjectManagement/$(EXPECTED_OUTPUT_FILE) && echo 'PM SUCCESS' || $(call logpmerror)
 pmclean:
 	-@rm ProjectManagement/tmp -f
 	-@rm ProjectManagement/*.class -f
