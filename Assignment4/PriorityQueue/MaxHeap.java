@@ -12,8 +12,8 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
      * Along with keys, an insertionTime is also kept which indicates when
      * a key was inserted.
      */
-    class Node implements Comparable<Node> {
-        T key;
+    public class Node implements Comparable<Node> {
+        public T key;
         private int insertionTime;
 
         public Node(T key) {
@@ -37,7 +37,7 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
         insert(node);
     }
 
-    private void insert(Node node) {
+    public void insert(Node node) {
         int index = list.size();
         list.add(node);
         while (index > 0) {
@@ -57,9 +57,14 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
 
     @Override
     public T extractMax() {
+        Node node = extractMaxNode();
+        return node != null ? node.key : null;
+    }
+
+    public Node extractMaxNode() {
         if (list.size() == 0) return null;
 
-        T ret = list.get(0).key;
+        Node ret = list.get(0);
         Node last = list.remove(list.size() - 1);
 
         // If size of list is 0, nothing to do
@@ -106,4 +111,7 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
         return ret;
     }
 
+    public int size() {
+        return list.size();
+    }
 }
