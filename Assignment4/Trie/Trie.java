@@ -15,10 +15,8 @@ public class Trie<T> implements TrieInterface<T> {
         try {
             root.delete(word, 0);
         } catch (NotFoundException e) {
-            System.out.println("ERROR DELETING");
             return false;
         }
-        System.out.println("DELETED");
         return true;
     }
 
