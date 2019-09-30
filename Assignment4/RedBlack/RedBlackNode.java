@@ -18,6 +18,11 @@ public class RedBlackNode<T extends Comparable, E> implements RBNodeInterface<E>
     RedBlackNode<T, E> left;
     RedBlackNode<T, E> right;
 
+    // Workaround for the weird condition to return node with null key and values
+    // for indicating search failure
+    private RedBlackNode() {}
+    public static RedBlackNode nullNode = new RedBlackNode();
+
     RedBlackNode(T key, E value) {
         this.key = key;
         values = new LinkedList<>();

@@ -32,6 +32,6 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E>  {
             }
         }
 
-        return null; // Not found
+        return RedBlackNode.nullNode; // Not found
     }
 }
