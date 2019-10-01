@@ -10,6 +10,7 @@ logrberror = (echo "ERROR"; echo "EXPECTED_OUTPUT:"; echo "--------------"; cat 
 logpqerror = (echo 'ERROR '; echo 'EXPECTED_OUTPUT:'; echo "--------------"; cat PriorityQueue/$(EXPECTED_OUTPUT_FILE); echo "=============="; echo "Your OUTPUT:"; echo "--------------"; cat PriorityQueue/tmp; )
 logpmerror = (echo 'ERROR '; echo 'EXPECTED_OUTPUT:'; echo "--------------"; cat ProjectManagement/$(EXPECTED_OUTPUT_FILE); echo "=============="; echo "Your OUTPUT:"; echo "--------------"; cat ProjectManagement/tmp; )
 
+
 all: triebuild triecheck rbtreebuild rbtreecheck pqbuild  pqcheck pmbuild pmcheck clean
 testcase: pqtestcase rbtestcase trietestcase pmtestcase
 build: triebuild rbtreebuild pqbuild pmbuild
@@ -19,6 +20,14 @@ rbtree: rbtreebuild rbtreecheck rbtreeclean
 pq: pqbuild pqcheck pqclean
 pm: pmbuild pmcheck pmclean
 
+ENTRY=2018MT10742
+handin:
+	@mkdir -p src
+	@rsync -aP --exclude=src/ --exclude=$(ENTRY)_assignment4.zip.b64 --exclude=main.pdf --exclude=*/INP2 * src/
+	@zip -r $(ENTRY)_assignment4.zip src/
+	@base64 $(ENTRY)_assignment4.zip > $(ENTRY)_assignment4.zip.b64
+	@rm $(ENTRY)_assignment4.zip
+	@rm -r src
 
 triebuild:
 	@echo "**********"
