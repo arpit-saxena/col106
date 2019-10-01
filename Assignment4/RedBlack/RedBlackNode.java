@@ -17,7 +17,6 @@ public class RedBlackNode<T extends Comparable, E> implements RBNodeInterface<E>
     RedBlackNode<T, E> parent;
     RedBlackNode<T, E> left;
     RedBlackNode<T, E> right;
-    public boolean isDeleted = false;
 
     // Workaround for the weird condition to return node with null key and values
     // for indicating search failure
@@ -192,15 +191,5 @@ public class RedBlackNode<T extends Comparable, E> implements RBNodeInterface<E>
         } else if (right == child) {
             right = replacement;
         }
-    }
-
-    /**
-     * Add itself and all it's children to the list given
-     * Elements are added in the same order as in-order traversal
-     */
-    public void addAllNodes(List<RedBlackNode<T, E>> list) {
-        if (left != null) left.addAllNodes(list);
-        if (!isDeleted) list.add(this);
-        if (right != null) right.addAllNodes(list);
     }
 }

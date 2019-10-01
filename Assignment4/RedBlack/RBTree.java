@@ -1,8 +1,5 @@
 package RedBlack;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import RedBlack.RedBlackNode.Color;
 
 public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E>  {
@@ -36,12 +33,5 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E>  {
         }
 
         return RedBlackNode.nullNode; // Not found
-    }
-
-    public List<RedBlackNode<T, E>> allNodes() {
-        List<RedBlackNode<T, E>> list = new LinkedList<>();
-        if (root == null) return list;
-        root.addAllNodes(list);
-        return list;
     }
 }
