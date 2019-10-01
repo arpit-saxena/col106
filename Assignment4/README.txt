@@ -21,10 +21,17 @@ First, the time complexities of all implemented data structures (and their opera
     - printTrie: O(nl)   -- Read below for meaning of n and l
         Here, we have to print all the values stored in the trie rooted at the given node. For this, we need to hit upon each node. We then do a constant amount of work at each node (sorting the children to ensure lexicographic order), so the complexity depends upon how many nodes we have in the trie. Suppose there are n l-length strings in that trie, and in the worst case they don't have a common prefix, so the complexity would be O(nl)
 
-    - printLevel, print:
+    - printLevel, print: O(95 ^ h)
         Both these methods call a common helper print command, which either prints the specific level it receives in the arguments or prints all if it gets -1.
         Here, we are maintaining a queue, removing elements from it, adding their children back and doing some processing on the node. The processing of each node takes constant time, and we need to process all nodes till a particular level (or till end). 
-        #TODO: ahs
+        Also, we need to process all nodes up to that particular level (or of all levels). Suppose each node can have maximum "a" possible children, and in the worst case each node will have all children. So, nodes at a level l are (root being at level 0) a^l. 
+        Therefore, nodes till level h are
+            a^0 + a^1 + ... + a^h
+            = (a^(h+1) - 1) / (a - 1) 
+            = O(a^(h+1))
+        Therefore, time taken here is O(a^(h+1)). Since each node can have 95 possible children (ASCII values 32 - 126), a = 95.
+        So, time taken is O(95 ^ h).
+
 
 2. RED BLACK TREE
     Only implements the insert and search methods (as required by the specs) and these are made by calling appropriate methods of RedBlackNode

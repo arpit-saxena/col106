@@ -5,8 +5,7 @@ import java.util.List;
 
 import PriorityQueue.MaxHeap;
 
-// TODO: Check if can make Project comparable
-public class Project implements Comparable<Project>{
+public class Project{
     String name;
     int priority;
     int budget;

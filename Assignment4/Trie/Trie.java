@@ -62,14 +62,15 @@ public class Trie<T> implements TrieInterface<T> {
     */
     public void print(int level) {
 
-        // TODO: Verify what to do in this edge case
-        if (root == null) {
-            return;
-        }
-
         if (level == -1) {
             System.out.println("-------------");
             System.out.println("Printing Trie");
+        }
+
+        if (root == null) {
+            System.out.println("Level " + 1 + ": ");
+            System.out.println("-------------");
+            return;
         }
 
         Queue<TrieNode<T>> queue = new LinkedList<>();
