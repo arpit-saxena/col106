@@ -45,13 +45,18 @@ public class RedBlackNode<T extends Comparable, E> implements RBNodeInterface<E>
 
     /**
      * Insert a key value pair into the children
-     * Returns the node where the key-value pair was finally inserted
+     * Returns the node where the key-value pair was finally inserted if a new
+     * node was created. Otherwise null is returned to indicate there is no possible
+     * problems with the colouring
      */
     public RedBlackNode<T, E> insert(T key, E value) {
         int comparisonResult = key.compareTo(this.key);
+
+        // Key already exists, insert here and exit. return null since no structure
+        // changes, so no possible violations of red black properties
         if (comparisonResult == 0) {
             values.add(value);
-            return this;
+            return null;
         }
 
         if (comparisonResult < 0) { // key < this.key

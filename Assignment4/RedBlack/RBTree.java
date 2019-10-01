@@ -14,7 +14,7 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E>  {
         }
 
         RedBlackNode<T, E> problemNode = root.insert(key, value);
-        problemNode.fixUp(this);
+        if (problemNode != null) problemNode.fixUp(this);
     }
 
     @Override
