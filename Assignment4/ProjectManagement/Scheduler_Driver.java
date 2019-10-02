@@ -18,7 +18,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
         File file;
         if (args.length == 0) {
-            URL url = PriorityQueueDriverCode.class.getResource("INP");
+            URL url = Scheduler_Driver.class.getResource("INP");
             file = new File(url.getPath());
         } else {
             file = new File(args[0]);
