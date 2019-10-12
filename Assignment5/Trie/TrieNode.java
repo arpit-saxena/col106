@@ -1,19 +1,29 @@
 package Trie;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import Util.NodeInterface;
 
 class NotFoundException extends Exception {}
 
 public class TrieNode<T> implements NodeInterface<T> {
+    class InternalNode {
+        char c;
+        TrieNode<T> node;
+
+        InternalNode(char c, TrieNode<T> node) {
+            this.c = c;
+            this.node = node;
+        }
+    }
+
     char c;
-    HashMap<Character, TrieNode<T>> children;
+    LinkedList<InternalNode> children = new LinkedList<>();
     T value;
 
     TrieNode(char c) {
         this.c = c;
-        children = new HashMap<>(128); // For 128 ascii characters
     }
 
     @Override
@@ -23,20 +33,29 @@ public class TrieNode<T> implements NodeInterface<T> {
 
     /**
      * Inserting word: Put word.charAt(index) in appropriate child
-     * Returns the node where the last character is inserted
-    */
+     * Returns the node next to the node where the last character is inserted
+     */
     public TrieNode<T> insert(String word, int index) {
-        if (index >= word.length()) {
-            return this;
+        if (index >= word.length()) return this;
+
+        char currChar = word.charAt(index);
+        ListIterator<InternalNode> iterator = children.listIterator();
+        while(iterator.hasNext()) {
+            InternalNode node = iterator.next();
+            if (node.c == currChar) {
+                return node.node.insert(word, index + 1);
+            } else if (node.c > currChar) {
+                iterator.previous();
+                TrieNode<T> newChild = new TrieNode<T>(currChar);
+                iterator.add(new InternalNode(currChar, newChild));
+                return newChild.insert(word, index + 1);
+            }
         }
 
-        char ch = word.charAt(index);
-        TrieNode<T> child = children.get(ch);
-        if (child == null) {
-            child = new TrieNode<>(ch);
-            children.put(ch, child);
-        }
-        return child.insert(word, index + 1);
+        // All elements in children are less than currChar
+        TrieNode<T> newChild = new TrieNode<T>(currChar);
+        iterator.add(new InternalNode(currChar, newChild));
+        return newChild.insert(word, index + 1);
     }
 
     /**
@@ -47,21 +66,15 @@ public class TrieNode<T> implements NodeInterface<T> {
             System.out.println(value.toString());
         }
 
-        TrieNode[] arr = new TrieNode[128];
-        children.forEach((ch, value) -> {
-            arr[ch] = value;
-        });
-
-        for (TrieNode t : arr) {
-            if (t != null) {
-                t.printAll();
-            }
+        for (InternalNode node : children) {
+            node.node.printAll();
         }
     }
 
     /**
      * Finding prefix in children. Check if prefix.charAt(index) is a child
-     * Returns the node that matched the last character of prefix. Null if no match
+     * Returns the node next to the node that matched the last character of prefix. 
+     * Null if no match
      */
     public TrieNode<T> findPrefixInChildren(String prefix, int index) {
         if (index >= prefix.length()) {
@@ -69,9 +82,12 @@ public class TrieNode<T> implements NodeInterface<T> {
         }
 
         char ch = prefix.charAt(index);
-        TrieNode<T> child = children.get(ch);
-        if (child != null) {
-            return child.findPrefixInChildren(prefix, index + 1);
+        for (InternalNode node : children) {
+            if (node.c > ch) {
+                return null; // Not found
+            } else if (node.c == ch) {
+                return node.node.findPrefixInChildren(prefix, index + 1);
+            }
         }
 
         return null;
@@ -85,12 +101,17 @@ public class TrieNode<T> implements NodeInterface<T> {
     public boolean delete(String word, int index) throws NotFoundException {
         if (index < word.length()) {
             char ch = word.charAt(index);
-            TrieNode<T> child = children.get(ch);
-            if (child == null) throw new NotFoundException();
-
-            boolean ret = child.delete(word, index + 1);
-            if (ret) {
-                children.remove(ch);
+            ListIterator<InternalNode> iterator = children.listIterator();
+            while (iterator.hasNext()) {
+                InternalNode node = iterator.next();
+                if (node.c > ch) throw new NotFoundException();
+                if (node.c == ch) {
+                    boolean ret = node.node.delete(word, index + 1);
+                    if (ret) {
+                        iterator.remove();
+                    }
+                    break;
+                }
             }
         }
 

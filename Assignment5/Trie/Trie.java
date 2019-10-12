@@ -84,8 +84,8 @@ public class Trie<T> implements TrieInterface<T> {
             for (int i = 0; i < numElements; i++) {
                 TrieNode<T> node = queue.poll();
                 levelChars[node.c]++;
-                node.children.forEach((key, value) -> {
-                    queue.add(value);
+                node.children.forEach(childNode -> {
+                    queue.add(childNode.node);
                     newNumElements.count++;
                 });
             }
