@@ -4,6 +4,15 @@ package ProjectManagement;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+
+import PriorityQueue.MaxHeap;
+import PriorityQueue.PriorityQueueDriverCode;
+import Trie.Trie;
+import Trie.TrieNode;
 
 public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
@@ -163,46 +172,242 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
     }
 
 
-
-
+    @Override
     public void schedule() {
-            execute_a_job();
+        System.out.println("Remaining jobs: " + jobQueue.size());
+        MaxHeap<Job>.Node node;
+        while((node = jobQueue.extractMaxNode()) != null){
+            Job job = node.key;
+            System.out.println(
+                "Executing: "
+                + job.name()
+                + " from: "
+                + job.project().name
+            );
+            if (job.project().budget >= job.executionTime()) {
+                globalTime += job.executionTime();
+                job.setCompleted(globalTime);
+                job.project().budget -= job.executionTime();
+                jobsDone.add(job);
+                System.out.println(
+                    "Project: "
+                    + job.project().name
+                    + " budget remaining: "
+                    + job.project().budget
+                );
+                return;
+            }
+            job.project().notReadyJobs.add(node);
+            
+            // If the project has only 1 non ready job now, it must have had no non ready
+            // jobs before, so has to be added to the list of all projects with non ready
+            // jobs
+            if (job.project().notReadyJobs.size() == 1) {
+                projectsWithNotReadyJobs.put(job.project().name, job.project().notReadyJobs);
+            }
+            System.out.println("Un-sufficient budget.");
+        }
     }
 
-    public void run_to_completion() {
+    private void timed_schedule() {
+        MaxHeap<Job>.Node node;
+        while((node = jobQueue.extractMaxNode()) != null){
+            Job job = node.key;
+            if (job.project().budget >= job.executionTime()) {
+                globalTime += job.executionTime();
+                job.setCompleted(globalTime);
+                job.project().budget -= job.executionTime();
+                jobsDone.add(job);
+                return;
+            }
+            job.project().notReadyJobs.add(node);
+            
+            // If the project has only 1 non ready job now, it must have had no non ready
+            // jobs before, so has to be added to the list of all projects with non ready
+            // jobs
+            if (job.project().notReadyJobs.size() == 1) {
+                projectsWithNotReadyJobs.put(job.project().name, job.project().notReadyJobs);
+            }
+        }
+    }
 
+    @Override
+    public void run_to_completion() {
+        while (jobQueue.size() != 0) {
+            System.out.println("Running code");
+            schedule();
+            System.out.println("System execution completed");
+        }
+    }
+
+    @Override
+    public void timed_run_to_completion() {
+        while(jobQueue.size() != 0) {
+            timed_schedule();
+        }
     }
 
     public void print_stats() {
-
+        System.out.println("--------------STATS---------------");
+        System.out.println("Total jobs done: " + jobsDone.size());
+        for (Job job : jobsDone) {
+            System.out.println(job);
+        }
+        System.out.println("------------------------");
+        
+        MaxHeap<Job> jobsNotDone = new MaxHeap<>();
+        projectsWithNotReadyJobs.forEach((projectName, jobNodes) -> {
+            jobNodes.forEach((jobNode) -> {
+                jobsNotDone.insert(jobNode);
+            });
+        });
+        
+        System.out.println("Unfinished jobs: ");
+        Job job;
+        int numUnfinishedJobs = 0;
+        while ((job = jobsNotDone.extractMax()) != null) {
+            System.out.println(job);
+            numUnfinishedJobs++;
+        }
+        System.out.println("Total unfinished jobs: " + numUnfinishedJobs);
+        System.out.println("--------------STATS DONE---------------");
     }
 
     public void handle_add(String[] cmd) {
+        System.out.println("ADDING Budget");
 
+        String projectName = cmd[1];
+        int budgetAddition = Integer.parseInt(cmd[2]);
+
+        TrieNode node = projectsTrie.search(projectName);
+        if (node == null) {
+            System.out.println("No such project exists. " + projectName);
+            return;
+        }
+
+        Project project = (Project) node.getValue();
+        project.budget += budgetAddition;
+
+        for (MaxHeap<Job>.Node jobNode : project.notReadyJobs) {
+            jobQueue.insert(jobNode);
+        }
+        projectsWithNotReadyJobs.remove(project.name);
+        project.notReadyJobs = new LinkedList<>();
     }
 
+    @Override
     public void handle_empty_line() {
-       schedule();
+        System.out.println("Running code");
+        schedule();
+        System.out.println("Execution cycle completed");
+    }
+
+    public void timed_handle_empty_line() {
+        timed_schedule();
     }
 
 
-    public void handle_query(String key) {
+    public void handle_query(String jobName) {
+        System.out.println("Querying");
+        TrieNode node = jobsTrie.search(jobName);
+        if (node == null) {
+            System.out.println(jobName + ": NO SUCH JOB");
+            return;
+        }
 
+        Job job = (Job) node.getValue();
+        if (job.isCompleted) {
+            System.out.println(jobName + ": COMPLETED");
+        } else {
+            System.out.println(jobName + ": NOT FINISHED");
+        }
     }
 
+    Trie<User> usersTrie = new Trie<>();
+    Trie<Project> projectsTrie = new Trie<>();
+    Trie<Job> jobsTrie = new Trie<>();
+    MaxHeap<Job> jobQueue = new MaxHeap<>();
+    int globalTime = 0;
+    List<Job> jobsDone = new LinkedList<Job>();
+
+    // For jobs that weren't able to be executed due to budget constraints
+    // Project name is key along with a list of the jobs
+    HashMap<String, List<MaxHeap<Job>.Node>>  projectsWithNotReadyJobs = new HashMap<>();
+
+    @Override
     public void handle_user(String name) {
-
+        System.out.println("Creating user");
+        timed_handle_user(name);
     }
 
+    @Override
+    public void timed_handle_user(String name) {
+        User user = new User(name);
+        usersTrie.insert(name, user);
+    }
+
+    @Override
     public void handle_job(String[] cmd) {
+        System.out.println("Creating job");
 
+        switch(internal_handle_job(cmd)) {
+            case 1:
+                System.out.println("No such project exists. " + cmd[2]);
+                break;
+            case 2:
+                System.out.println("No such user exists: " + cmd[3]);
+                break;
+        }
     }
 
+    @Override
+    public void timed_handle_job(String[] cmd) {
+        internal_handle_job(cmd);
+    }
+
+    /**
+     * Returns 1 if No such project exists
+     *         2 if No such user exists
+     *         0 otherwise
+     */
+    private int internal_handle_job(String[] cmd) {
+        String jobName = cmd[1];
+        
+        String projectName = cmd[2];
+        TrieNode node = projectsTrie.search(projectName);
+        if (node == null) {
+            return 1;
+        }
+        Project project = (Project) node.getValue();
+
+        String userName = cmd[3];
+        node = usersTrie.search(userName);
+        if (node == null) {
+            return 2;
+        }
+        User user = (User) node.getValue();
+
+        int jobExecutionTime = Integer.parseInt(cmd[4]);
+
+        Job job = new Job(jobName, project, user, jobExecutionTime);
+        jobsTrie.insert(jobName, job);
+        jobQueue.insert(job);
+        return 0;
+    }
+
+    @Override
     public void handle_project(String[] cmd) {
-
+        System.out.println("Creating project");
+        timed_handle_project(cmd);
     }
 
-    public void execute_a_job() {
+    @Override
+    public void timed_handle_project(String[] cmd) {
+        String projectName = cmd[1];
+        int projectPriority = Integer.parseInt(cmd[2]);
+        int projectBudget = Integer.parseInt(cmd[3]);
 
+        Project project = new Project(projectName, projectPriority, projectBudget);
+        projectsTrie.insert(projectName, project);
     }
 }
