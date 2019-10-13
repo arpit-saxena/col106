@@ -10,6 +10,10 @@ class Counter {
 public class Trie<T> implements TrieInterface<T> {
     TrieNode<T> root = new TrieNode<T>('*');
 
+    public interface Consumer<T> {
+        void consume(T val);
+    }
+
     @Override
     public boolean delete(String word) {
         try {
@@ -42,8 +46,17 @@ public class Trie<T> implements TrieInterface<T> {
     @Override
     public boolean insert(String word, Object value) {
         TrieNode<T> endNode = root.insert(word, 0);
+        if (endNode.value != null) {
+            return false;
+        }
         endNode.value = (T) value;
         return true;
+    }
+
+    public void forEach(Consumer<T> consumer) {
+        if (root != null) {
+            root.forEach(consumer);
+        }
     }
 
     @Override

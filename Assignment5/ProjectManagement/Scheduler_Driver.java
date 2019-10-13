@@ -4,7 +4,6 @@ package ProjectManagement;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -203,7 +202,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
             // jobs before, so has to be added to the list of all projects with non ready
             // jobs
             if (job.project().notReadyJobs.size() == 1) {
-                projectsWithNotReadyJobs.put(job.project().name, job.project().notReadyJobs);
+                projectsWithNotReadyJobs.insert(job.project().name, job.project().notReadyJobs);
             }
             System.out.println("Un-sufficient budget.");
         }
@@ -226,7 +225,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
             // jobs before, so has to be added to the list of all projects with non ready
             // jobs
             if (job.project().notReadyJobs.size() == 1) {
-                projectsWithNotReadyJobs.put(job.project().name, job.project().notReadyJobs);
+                projectsWithNotReadyJobs.insert(job.project().name, job.project().notReadyJobs);
             }
         }
     }
@@ -256,7 +255,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         System.out.println("------------------------");
         
         MaxHeap<Job> jobsNotDone = new MaxHeap<>();
-        projectsWithNotReadyJobs.forEach((projectName, jobNodes) -> {
+        projectsWithNotReadyJobs.forEach(jobNodes -> {
             jobNodes.forEach((jobNode) -> {
                 jobsNotDone.insert(jobNode);
             });
@@ -291,7 +290,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         for (MaxHeap<Job>.Node jobNode : project.notReadyJobs) {
             jobQueue.insert(jobNode);
         }
-        projectsWithNotReadyJobs.remove(project.name);
+        projectsWithNotReadyJobs.delete(project.name);
         project.notReadyJobs = new LinkedList<>();
     }
 
@@ -332,7 +331,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
     // For jobs that weren't able to be executed due to budget constraints
     // Project name is key along with a list of the jobs
-    HashMap<String, List<MaxHeap<Job>.Node>>  projectsWithNotReadyJobs = new HashMap<>();
+    Trie<List<MaxHeap<Job>.Node>>  projectsWithNotReadyJobs = new Trie<>();
 
     @Override
     public void handle_user(String name) {
