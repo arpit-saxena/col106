@@ -1,6 +1,8 @@
 package Trie;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import Util.NodeInterface;
@@ -8,7 +10,7 @@ import Util.NodeInterface;
 class NotFoundException extends Exception {}
 
 public class TrieNode<T> implements NodeInterface<T> {
-    class InternalNode {
+    static class InternalNode<T> {
         char c;
         TrieNode<T> node;
 
@@ -18,13 +20,8 @@ public class TrieNode<T> implements NodeInterface<T> {
         }
     }
 
-    char c;
-    LinkedList<InternalNode> children = new LinkedList<>();
+    List<InternalNode> children = new LinkedList<>();
     T value;
-
-    TrieNode(char c) {
-        this.c = c;
-    }
 
     @Override
     public T getValue() {
@@ -46,14 +43,14 @@ public class TrieNode<T> implements NodeInterface<T> {
                 return node.node.insert(word, index + 1);
             } else if (node.c > currChar) {
                 iterator.previous();
-                TrieNode<T> newChild = new TrieNode<T>(currChar);
+                TrieNode<T> newChild = new TrieNode<T>();
                 iterator.add(new InternalNode(currChar, newChild));
                 return newChild.insert(word, index + 1);
             }
         }
 
         // All elements in children are less than currChar
-        TrieNode<T> newChild = new TrieNode<T>(currChar);
+        TrieNode<T> newChild = new TrieNode<T>();
         iterator.add(new InternalNode(currChar, newChild));
         return newChild.insert(word, index + 1);
     }
@@ -77,7 +74,7 @@ public class TrieNode<T> implements NodeInterface<T> {
             if (node.node.value != null) {
                 consumer.consume(sb.toString());
             }
-            sb.append(node.node.c);
+            sb.append(node.c);
             node.node.forEachString(consumer, sb);
             sb.deleteCharAt(sb.length() - 1);
         }

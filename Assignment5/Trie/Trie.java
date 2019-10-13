@@ -8,7 +8,7 @@ class Counter {
 }
 
 public class Trie<T> implements TrieInterface<T> {
-    TrieNode<T> root = new TrieNode<T>('*');
+    TrieNode<T> root = new TrieNode<T>();
 
     public interface Consumer<T> {
         void consume(T val);
@@ -88,8 +88,10 @@ public class Trie<T> implements TrieInterface<T> {
             return;
         }
 
-        Queue<TrieNode<T>> queue = new LinkedList<>();
-        queue.offer(root);
+        Queue<TrieNode.InternalNode<T>> queue = new LinkedList<>();
+        TrieNode.InternalNode<T> rootInternal = 
+            new TrieNode.InternalNode<>('*', root);
+        queue.offer(rootInternal);
         int currLevel = 0;
         int numElements = 1;
 
@@ -97,10 +99,10 @@ public class Trie<T> implements TrieInterface<T> {
             int[] levelChars = new int[128];
             Counter newNumElements = new Counter();
             for (int i = 0; i < numElements; i++) {
-                TrieNode<T> node = queue.poll();
+                TrieNode.InternalNode<T> node = queue.poll();
                 levelChars[node.c]++;
-                node.children.forEach(childNode -> {
-                    queue.add(childNode.node);
+                node.node.children.forEach(childNode -> {
+                    queue.add(childNode);
                     newNumElements.count++;
                 });
             }
