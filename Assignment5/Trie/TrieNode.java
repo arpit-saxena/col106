@@ -62,13 +62,24 @@ public class TrieNode<T> implements NodeInterface<T> {
      * Performs the action specified by consumer on all values stored in
      * the trie rooted at this node
      */
-    public void forEach(Trie.Consumer<T> consumer) {
+    public void forEachValue(Trie.Consumer<T> consumer) {
         if (value != null) {
             consumer.consume(value);
         }
 
         for (InternalNode node : children) {
-            node.node.forEach(consumer);
+            node.node.forEachValue(consumer);
+        }
+    }
+
+    public void forEachString(Trie.Consumer<String> consumer, StringBuilder sb) {
+        for (InternalNode node : children) {
+            if (node.node.value != null) {
+                consumer.consume(sb.toString());
+            }
+            sb.append(node.node.c);
+            node.node.forEachString(consumer, sb);
+            sb.deleteCharAt(sb.length() - 1);
         }
     }
 
@@ -76,7 +87,8 @@ public class TrieNode<T> implements NodeInterface<T> {
      * Prints all strings stored in the trie rooted at this node
      */
     public void printAll() {
-        forEach(value -> System.out.println(value.toString()));
+        forEachString(value -> System.out.println(value.toString()), 
+            new StringBuilder());
     }
 
     /**

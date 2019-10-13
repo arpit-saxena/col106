@@ -40,7 +40,9 @@ public class Trie<T> implements TrieInterface<T> {
 
     @Override
     public void printTrie(TrieNode trieNode) {
-        trieNode.printAll();
+        if (trieNode != null) {
+            trieNode.printAll();
+        }
     }
 
     @Override
@@ -55,7 +57,7 @@ public class Trie<T> implements TrieInterface<T> {
 
     public void forEach(Consumer<T> consumer) {
         if (root != null) {
-            root.forEach(consumer);
+            root.forEachValue(consumer);
         }
     }
 
