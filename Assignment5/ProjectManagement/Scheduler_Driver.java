@@ -138,6 +138,9 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                 break;
         }
 
+        for(JobReport_ job : res) {
+            System.out.println(job);
+        }
         return res;
     }
 
@@ -159,15 +162,143 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
     }
 
     private ArrayList<JobReport_> handle_new_projectuser(String[] cmd) {
-        return null;
+        String projectName = cmd[1];
+        TrieNode node = projectsTrie.search(projectName);
+        if (node == null) return null;
+        Project project = (Project) node.getValue();
+
+        String userName = cmd[2];
+        node = usersTrie.search(userName);
+        if (node == null) return null;
+        User user = (User) node.getValue();
+
+        int t1 = Integer.parseInt(cmd[3]);
+        int t2 = Integer.parseInt(cmd[4]);
+
+        ArrayList<JobReport_> jobs = new ArrayList<>();
+        ArrayList<JobReport_> projectWiseJobs, userWiseJobs;
+
+        projectWiseJobs = findJobsByArrivalTime(project.allJobs, t1, t2);
+        userWiseJobs = findJobsByArrivalTime(user.allJobs, t1, t2);
+        
+        if (projectWiseJobs.size() < userWiseJobs.size()) {
+            for (JobReport_ job: projectWiseJobs) {
+                if (job.user().equals(userName)) {
+                    jobs.add(job);
+                }
+            }
+        } else {
+            for (JobReport_ job : userWiseJobs) {
+                if (job.project_name().equals(projectName)) {
+                    jobs.add(job);
+                }
+            }
+        }
+
+        return jobs;
     }
 
     private ArrayList<JobReport_> handle_new_user(String[] cmd) {
-        return null;
+        String userName = cmd[1];
+        TrieNode node = usersTrie.search(userName);
+        if (node == null) {
+            return null;
+        }
+        User user = (User) node.getValue();
+        int t1 = Integer.parseInt(cmd[2]);
+        int t2 = Integer.parseInt(cmd[3]);
+        return findJobsByArrivalTime(user.allJobs, t1, t2);
     }
 
     private ArrayList<JobReport_> handle_new_project(String[] cmd) {
-        return null;
+        String projectName = cmd[1];
+        TrieNode node = projectsTrie.search(projectName);
+        if (node == null) {
+            return null;
+        }
+        Project project = (Project) node.getValue();
+        int t1 = Integer.parseInt(cmd[2]);
+        int t2 = Integer.parseInt(cmd[3]);
+        return findJobsByArrivalTime(project.allJobs, t1, t2);
+    }
+
+    /**
+     * Returns all jobs with arrival time >= t1 and <= t2 from an array of jobs
+     */
+    private ArrayList<JobReport_> findJobsByArrivalTime(
+            ArrayList<JobReport_> jobs, int t1, int t2) {
+        int begin = 0;
+        int end = jobs.size() - 1;
+
+        int middle = (begin + end) / 2;
+        while(begin <= end) {
+            if (jobs.get(middle).arrival_time() < t1) {
+                begin = middle + 1;
+            } else if (jobs.get(middle).arrival_time() > t2) {
+                end = middle - 1;
+            } else {
+                begin = findJobsArrivedLaterThanOrAt(
+                    jobs, begin, middle, t1);
+                end = findJobsArrivedEarlierThanOrAt(
+                    jobs, middle, end, t2);
+                break;
+            }
+            middle = (begin + end) / 2;
+        }
+
+        return new ArrayList<>(jobs.subList(begin, end + 1));
+    }
+
+    /**
+     * Returns index i such that jobs[i..end] is the list of jobs which have
+     * arrived later than or at time t. Assumes jobs[end] has arrived later
+     * than or equal to t
+     */
+    private int findJobsArrivedLaterThanOrAt(List<JobReport_> jobs, int begin,
+                                             int end, int t) {
+        int middle = (begin + end) / 2;
+
+        // INV: jobs[end+1..end0] arrived at time >= t
+        //      jobs[begin0..begin-1] arrived at time < t
+        //      begin0 <= begin <= end <= end0
+        while (begin <= end) {
+            if (jobs.get(middle).arrival_time() < t) {
+                begin = middle + 1;
+            } else {
+                end = middle - 1;
+            }
+            middle = (begin + end) / 2;
+        }
+
+        // assert: jobs[begin..end0] arrived at time >= t.
+        // jobs[begin - 1] arrived at time < t
+        return begin;
+    }
+
+    /**
+     * Returns index i such that jobs[begin..i] is the list of jobs which have
+     * arrived earlier than or at time t. Assumes jobs[begin] has arrived earlier
+     * than or equal to t
+     */
+    private int findJobsArrivedEarlierThanOrAt(List<JobReport_> jobs, int begin,
+                                             int end, int t) {
+        int middle = (begin + end) / 2;
+
+        //INV: jobs[begin0..begin-1] arrived at time <= t
+        //     jobs[end+1..end0] arrived at time > t
+        //     begin0 <= begin <= end <= end0
+        while (begin <= end) {
+            if (jobs.get(middle).arrival_time() > t) {
+                end = middle - 1;
+            } else {
+                begin = middle + 1;
+            }
+            middle = (begin + end) / 2;
+        }
+
+        // assert: jobs[begin0..end] arrived at time <= t.
+        // jobs[end+1..end0] arrived at time > t.
+        return end;
     }
 
 
@@ -388,9 +519,13 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
         int jobExecutionTime = Integer.parseInt(cmd[4]);
 
-        Job job = new Job(jobName, project, user, jobExecutionTime);
+        Job job = new Job(jobName, project, user, jobExecutionTime, globalTime);
         jobsTrie.insert(jobName, job);
         jobQueue.insert(job);
+
+        project.allJobs.add(job);
+        user.allJobs.add(job);
+
         return 0;
     }
 

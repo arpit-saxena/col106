@@ -1,5 +1,6 @@
 package ProjectManagement;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +13,9 @@ public class Project{
 
     // Jobs of this project that weren't able to be executed due to budget limits
     public List<MaxHeap<Job>.Node> notReadyJobs = new LinkedList<>();
+
+    // All jobs of the project
+    public ArrayList<JobReport_> allJobs = new ArrayList<>();
 
     public Project(String name, int priority, int budget) {
         this.name = name;
