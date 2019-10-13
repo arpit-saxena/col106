@@ -1,14 +1,16 @@
 package ProjectManagement;
 
-public class Job implements Comparable<Job> {
+public class Job implements Comparable<Job>, JobReport_ {
     private String name;
     private Project project;
     private User creator;
     boolean isCompleted = false;
     private int executionTime;
     private int endTime = -1;
+    private int arrivalTime;
 
-    public Job(String name, Project project, User creator, int executionTime) {
+    public Job(String name, Project project, User creator, 
+                    int executionTime, int arrivalTime) {
         if (project == null) {
             throw new IllegalArgumentException("Project of a job cannot be null");
         }
@@ -21,6 +23,7 @@ public class Job implements Comparable<Job> {
         this.project = project;
         this.creator = creator;
         this.executionTime = executionTime;
+        this.arrivalTime = arrivalTime;
     }
 
     public String name() {
@@ -55,6 +58,7 @@ public class Job implements Comparable<Job> {
         return project.priority - job.project.priority;
     }
 
+    // TODO: Remove ArrivalTime from here; not required
     @Override
     public String toString() {
         return 
@@ -66,10 +70,38 @@ public class Job implements Comparable<Job> {
             + (isCompleted ? "COMPLETED" : "REQUESTED")
             + ", execution_time="
             + executionTime
+            + ", arrival_time="
+            + arrivalTime
             + ", end_time="
             + (endTime == -1 ? "null" : endTime)
             + ", name='"
             + name
             + "'}";
+    }
+
+    @Override
+    public String user() {
+        return creator.name;
+    }
+
+    @Override
+    public String project_name() {
+        return project.name;
+    }
+
+    // TODO: Confirm if budget() is supposed to return executionTime
+    @Override
+    public int budget() {
+        return executionTime;
+    }
+
+    @Override
+    public int arrival_time() {
+        return arrivalTime;
+    }
+
+    @Override
+    public int completion_time() {
+        return endTime;
     }
 }
