@@ -162,7 +162,7 @@ public class RedBlackNode<T extends Comparable, E> implements RBNodeInterface<E>
                 curr.right = parent;
                 curr.parent = parent.parent;
                 parent.parent.replaceChild(parent, curr);
-                parent.parent = parent;
+                parent.parent = curr;
                 parent.left = currRight;
                 if (currRight != null) currRight.parent = parent;
 
