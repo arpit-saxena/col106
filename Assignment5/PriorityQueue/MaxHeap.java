@@ -1,10 +1,15 @@
 package PriorityQueue;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> {
     ArrayList<Node> list = new ArrayList<>();
     private static int creationCounter = 0;
+
+    public static interface Consumer<T> {
+        void consume(T val);
+    }
 
     /**
      * Internal representation of an element
@@ -15,6 +20,7 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
     public class Node implements Comparable<Node> {
         public T key;
         private int insertionTime;
+        public int index; // index in list where this is inserted. -1 if not inserted
 
         public Node(T key) {
             this.key = key;
@@ -37,22 +43,71 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
         insert(node);
     }
 
-    public void insert(Node node) {
+    public void insert(List<Node> elements) {
+        // Deciding which method to use
+        boolean useHeapify = false; // useHeapify <=> add all elements to list 
+                                    //a               nd make heap
+        int n = list.size();
+        int k = elements.size();
+        int factor = 5;
+
+        if (
+            1 + n / k > 20
+            || 1 << (1 + n / k) > factor * (n + k)
+        ){
+            useHeapify = false;
+        } else {
+            useHeapify = true;
+        }
+
+        if (useHeapify) {
+            list.addAll(elements);
+            heapify();
+        } else {
+            for (Node node : list) {
+                insert(node);
+            }
+        }
+    }
+
+    /**
+     * Constructs the heap from the internal list
+     */
+    public void heapify() {
+        int lastIndex = list.size() - 1;
+        if (lastIndex == 0) return;
+        int i = lastIndex;
+        while (i > (lastIndex - 1) / 2) {
+            list.get(i).index = i;
+            i--;
+        }
+        while (i >= 0) {
+            list.get(i).index = i;
+            bubbleDown(i);
+            i--;
+        }
+    }
+
+    /**
+     * Insert an element into the max heap and return the final node
+     * in the underlying array in which it is finally inserted
+     */
+    public Node insertAndGetNode(T element) {
+        Node node = new Node(element);
+        insert(node);
+        return node;
+    }
+
+    /**
+     * Insert a node into the MaxHeap
+     * @param node the node to insert
+     * @return the final index in the underlying array where it is inserted
+     */
+    public int insert(Node node) {
         int index = list.size();
         list.add(node);
-        while (index > 0) {
-            int parentIndex = (index - 1) / 2;
-            Node parent = list.get(parentIndex);
-            int comparisonResult = parent.compareTo(node);
-
-            // parent >= node => Heap is now made
-            if (comparisonResult >= 0) break;
-
-            // Swap node with its parents and continue
-            list.set(parentIndex, node);
-            list.set(index, parent);
-            index = parentIndex;
-        }
+        node.index = index;
+        return bubbleUp(index);
     }
 
     @Override
@@ -65,6 +120,7 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
         if (list.size() == 0) return null;
 
         Node ret = list.get(0);
+        ret.index = -1;
         Node last = list.remove(list.size() - 1);
 
         // If size of list is 0, nothing to do
@@ -74,7 +130,51 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
 
         // Now list.size() >= 1
         list.set(0, last);
-        int index = 0;
+        last.index = 0;
+        bubbleDown(0);
+        return ret;
+    }
+
+    public int size() {
+        return list.size();
+    }
+
+    public T peekMax() {
+        if (list.size() == 0) return null;
+        return list.get(0).key;
+    }
+
+    /**
+     * Bubble up the node at index
+     * @return The new index of that node
+     */
+    public int bubbleUp(int index) {
+        Node node = list.get(index);
+        while (index > 0) {
+            int parentIndex = (index - 1) / 2;
+            Node parent = list.get(parentIndex);
+            int comparisonResult = parent.compareTo(node);
+
+            // parent >= node => Heap is now made
+            if (comparisonResult >= 0) break;
+
+            // Swap node with its parents and continue
+            list.set(parentIndex, node);
+            node.index = parentIndex;
+            list.set(index, parent);
+            parent.index = index;
+
+            index = parentIndex;
+        }
+        return index;
+    }
+
+    /**
+     * Bubble down the node at index
+     * @return the new index of that node
+     */
+    public int bubbleDown(int index) {
+        Node node = list.get(index);
 
         // Loop keeps running till the current node has a child with which we 
         // might to potentially swap the node value with
@@ -98,20 +198,35 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
             }
 
             Node replacementNode = list.get(replacementIndex);
-            int comparisonResult = replacementNode.compareTo(last);
+            int comparisonResult = replacementNode.compareTo(node);
 
-            // replacementNode < last => The parent greater than both children => done
+            // replacementNode < node => The parent greater than both children => done
             if (comparisonResult < 0) break;
 
             list.set(index, replacementNode);
-            list.set(replacementIndex, last);
+            replacementNode.index = index;
+            list.set(replacementIndex, node);
+            node.index = replacementIndex;
+
             index = replacementIndex;
         }
 
-        return ret;
+        return index;
     }
 
-    public int size() {
-        return list.size();
+    public void forEach(Consumer<T> consumer) {
+        list.forEach(node -> {
+           consumer.consume(node.key);
+        });
+    }
+
+    public void forEachNode(Consumer<Node> consumer) {
+        list.forEach(node -> {
+            consumer.consume(node);
+        });
+    }
+
+    public void clear() {
+        list.clear();
     }
 }

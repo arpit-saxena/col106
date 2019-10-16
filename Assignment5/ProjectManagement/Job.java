@@ -47,6 +47,14 @@ public class Job implements Comparable<Job>, JobReport_ {
         return executionTime;
     }
 
+    public boolean canExecute() {
+        return executionTime <= project.budget;
+    }
+
+    public int arrivalTime() {
+        return arrivalTime;
+    }
+
     /**
      * Compares the priority of this job and the job in the argument
      * Returns < 0 if the priority of this job is lesser than the job in argument
@@ -58,7 +66,7 @@ public class Job implements Comparable<Job>, JobReport_ {
         return project.priority - job.project.priority;
     }
 
-    // TODO: Remove ArrivalTime from here; not required
+    // TODO: Remove ArrivalTime , Priority from here; not required
     @Override
     public String toString() {
         return 
@@ -74,6 +82,8 @@ public class Job implements Comparable<Job>, JobReport_ {
             + arrivalTime
             + ", end_time="
             + (endTime == -1 ? "null" : endTime)
+            + ", priority="
+            + project.priority
             + ", name='"
             + name
             + "'}";

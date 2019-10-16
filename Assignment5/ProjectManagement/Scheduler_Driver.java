@@ -10,6 +10,7 @@ import java.util.List;
 
 import PriorityQueue.MaxHeap;
 import PriorityQueue.PriorityQueueDriverCode;
+import RedBlack.MaxHeapRB;
 import Trie.Trie;
 import Trie.TrieNode;
 
@@ -49,6 +50,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                 Integer start_time, end_time;
 
                 long qstart_time, qend_time;
+                ArrayList<UserReport_> userReport = null;
 
                 switch (cmd[0]) {
                     case "PROJECT":
@@ -78,7 +80,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                         break;
                     case "NEW_TOP":
                         qstart_time = System.nanoTime();
-                        timed_top_consumer(Integer.parseInt(cmd[1]));
+                        userReport = timed_top_consumer(Integer.parseInt(cmd[1]));
                         qend_time = System.nanoTime();
                         System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
                         break;
@@ -90,6 +92,12 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                         break;
                     default:
                         System.err.println("Unknown command: " + cmd[0]);
+                }
+
+                if (userReport != null) {
+                    for (UserReport_ report : userReport) {
+                        System.out.println(report);
+                    }
                 }
 
             }
@@ -144,21 +152,89 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         return res;
     }
 
+    Trie<User> usersTrie = new Trie<>();
+    Trie<Project> projectsTrie = new Trie<>();
+    Trie<Job> jobsTrie = new Trie<>();
+    MaxHeap<Job> jobQueue = new MaxHeap<>();
+    int globalTime = 0;
+    List<Job> jobsDone = new ArrayList<Job>();
+    MaxHeap<User> allUsers = new MaxHeap<>();
+    MaxHeap<Project> allProjects = new MaxHeap<>();
+
+    // For jobs that weren't able to be executed due to budget constraints
+    // Project name is key along with a list of the jobs
+    Trie<Project>  projectsWithNotReadyJobs = new Trie<>();
+
     @Override
     public ArrayList<UserReport_> timed_top_consumer(int top) {
-        return null;
+        ArrayList<MaxHeap<User>.Node> nodeList = new ArrayList<>(top);
+        ArrayList<UserReport_> list = new ArrayList<>(top);
+        for (int i = 0; i < top && allUsers.size() > 0; i++) {
+            MaxHeap<User>.Node node = allUsers.extractMaxNode();
+            nodeList.add(node);
+            list.add(node.key);
+        }
+
+        allUsers.insert(nodeList);
+        return list;
     }
 
 
-
     @Override
-    public void timed_flush(int waittime) {
+    public void timed_flush(int waitTime) {
+        // Execute all jobs with arrivalTime <= beginTime
+        int beginTime = globalTime - waitTime;
 
+        // Jobs that have to be tried to be executed
+        ArrayList<MaxHeap<Job>.Node> potJobs = new ArrayList<>();
+
+        // Jobs that will form the new job queue
+        ArrayList<MaxHeap<Job>.Node> newQueue = new ArrayList<>();
+        jobQueue.forEachNode(jobNode -> {
+            Job job = jobNode.key;
+            if (job.arrivalTime() <= beginTime && job.canExecute()) {
+                potJobs.add(jobNode);
+            } else {
+                newQueue.add(jobNode);
+            }
+        });
+
+        // jobs to flush
+        MaxHeap<Job> flushJobs = new MaxHeap<>();
+        flushJobs.insert(potJobs);
+        MaxHeap<Job>.Node node;
+        while (flushJobs.size() > 0) {
+            node = flushJobs.extractMaxNode();
+            if (!executeIfPossible(node.key)) {
+                newQueue.add(node);
+            }
+        }
+
+        jobQueue.clear();
+        jobQueue.insert(newQueue);
     }
     
 
     private ArrayList<JobReport_> handle_new_priority(String s) {
-        return null;
+        int priority = Integer.parseInt(s);
+        ArrayList<MaxHeap<Job>.Node> nodeList = new ArrayList<>();
+        ArrayList<JobReport_> list = new ArrayList<>();
+
+        while (jobQueue.size() > 0 && jobQueue.peekMax().project().priority >= priority) {
+            MaxHeap<Job>.Node node = jobQueue.extractMaxNode();
+            list.add(node.key);
+            nodeList.add(node);
+        }
+        jobQueue.insert(nodeList);
+
+        projectsWithNotReadyJobs.forEach(project -> {
+            list.addAll(project.notReadyJobsRB.elementsGreaterThanEqualTo(
+                job -> {
+                    return job.project().priority - priority;
+                }
+            ));
+        });
+        return list;
     }
 
     private ArrayList<JobReport_> handle_new_projectuser(String[] cmd) {
@@ -325,15 +401,19 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                     + " budget remaining: "
                     + job.project().budget
                 );
+                job.creator().latestCompletionTime = globalTime;
+                job.creator().budgetConsumed += job.executionTime();
+                allUsers.bubbleUp(job.creator().nodeHeap.index);
                 return;
             }
-            job.project().notReadyJobs.add(node);
+            job.project().notReadyJobs.insert(job);
+            job.project().notReadyJobsRB.insert(job);
             
             // If the project has only 1 non ready job now, it must have had no non ready
             // jobs before, so has to be added to the list of all projects with non ready
             // jobs
             if (job.project().notReadyJobs.size() == 1) {
-                projectsWithNotReadyJobs.insert(job.project().name, job.project().notReadyJobs);
+                projectsWithNotReadyJobs.insert(job.project().name, job.project());
             }
             System.out.println("Un-sufficient budget.");
         }
@@ -343,22 +423,38 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         MaxHeap<Job>.Node node;
         while((node = jobQueue.extractMaxNode()) != null){
             Job job = node.key;
-            if (job.project().budget >= job.executionTime()) {
-                globalTime += job.executionTime();
-                job.setCompleted(globalTime);
-                job.project().budget -= job.executionTime();
-                jobsDone.add(job);
+            if (executeIfPossible(job)) {
                 return;
             }
-            job.project().notReadyJobs.add(node);
+            job.project().notReadyJobs.insert(job);
+            job.project().notReadyJobsRB.insert(job);
             
             // If the project has only 1 non ready job now, it must have had no non ready
             // jobs before, so has to be added to the list of all projects with non ready
             // jobs
             if (job.project().notReadyJobs.size() == 1) {
-                projectsWithNotReadyJobs.insert(job.project().name, job.project().notReadyJobs);
+                projectsWithNotReadyJobs.insert(job.project().name, job.project());
             }
         }
+    }
+
+    /**
+     * Execute the given job if possible
+     * Return true if job was executed, false otherwise
+     */
+    private boolean executeIfPossible(Job job) {
+        if (!job.canExecute()) return false;
+
+        globalTime += job.executionTime();
+        job.setCompleted(globalTime);
+        job.project().budget -= job.executionTime();
+        jobsDone.add(job);
+
+        job.creator().latestCompletionTime = globalTime;
+        job.creator().budgetConsumed += job.executionTime();
+        allUsers.bubbleUp(job.creator().nodeHeap.index);
+
+        return true;
     }
 
     @Override
@@ -377,6 +473,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         }
     }
 
+    @Override
     public void print_stats() {
         System.out.println("--------------STATS---------------");
         System.out.println("Total jobs done: " + jobsDone.size());
@@ -386,8 +483,8 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         System.out.println("------------------------");
         
         MaxHeap<Job> jobsNotDone = new MaxHeap<>();
-        projectsWithNotReadyJobs.forEach(jobNodes -> {
-            jobNodes.forEach((jobNode) -> {
+        projectsWithNotReadyJobs.forEach(project -> {
+            project.notReadyJobs.forEachNode(jobNode -> {
                 jobsNotDone.insert(jobNode);
             });
         });
@@ -418,11 +515,11 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         Project project = (Project) node.getValue();
         project.budget += budgetAddition;
 
-        for (MaxHeap<Job>.Node jobNode : project.notReadyJobs) {
+        project.notReadyJobs.forEach(jobNode -> {
             jobQueue.insert(jobNode);
-        }
+        });
         projectsWithNotReadyJobs.delete(project.name);
-        project.notReadyJobs = new LinkedList<>();
+        project.notReadyJobs = new MaxHeap<>();
     }
 
     @Override
@@ -453,17 +550,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         }
     }
 
-    Trie<User> usersTrie = new Trie<>();
-    Trie<Project> projectsTrie = new Trie<>();
-    Trie<Job> jobsTrie = new Trie<>();
-    MaxHeap<Job> jobQueue = new MaxHeap<>();
-    int globalTime = 0;
-    List<Job> jobsDone = new LinkedList<Job>();
-
-    // For jobs that weren't able to be executed due to budget constraints
-    // Project name is key along with a list of the jobs
-    Trie<List<MaxHeap<Job>.Node>>  projectsWithNotReadyJobs = new Trie<>();
-
     @Override
     public void handle_user(String name) {
         System.out.println("Creating user");
@@ -474,6 +560,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
     public void timed_handle_user(String name) {
         User user = new User(name);
         usersTrie.insert(name, user);
+        user.nodeHeap = allUsers.insertAndGetNode(user);
     }
 
     @Override
@@ -543,5 +630,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
         Project project = new Project(projectName, projectPriority, projectBudget);
         projectsTrie.insert(projectName, project);
+        allProjects.insert(project);
     }
 }

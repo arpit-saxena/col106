@@ -5,14 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import PriorityQueue.MaxHeap;
+import RedBlack.MaxHeapRB;
 
-public class Project{
+public class Project implements Comparable<Project> {
     String name;
     int priority;
     int budget;
 
     // Jobs of this project that weren't able to be executed due to budget limits
-    public List<MaxHeap<Job>.Node> notReadyJobs = new LinkedList<>();
+    /* public List<MaxHeap<Job>.Node> notReadyJobs = new LinkedList<>(); */
+    public MaxHeap<Job> notReadyJobs = new MaxHeap<>();
+    public MaxHeapRB<Job> notReadyJobsRB = new MaxHeapRB<>();
 
     // All jobs of the project
     public ArrayList<JobReport_> allJobs = new ArrayList<>();
@@ -23,7 +26,8 @@ public class Project{
         this.budget = budget;
     }
 
+    @Override
     public int compareTo(Project project) {
-        return name.compareTo(project.name);
+        return priority - project.priority;
     }
 }

@@ -20,9 +20,11 @@ public class RedBlackDriverCode {
         try {
             br = new BufferedReader(new FileReader(file));
 
+            MaxHeapRB<String> heap = new MaxHeapRB<>();
             String st;
             while ((st = br.readLine()) != null) {
-                String[] cmd = st.split(" ");
+                heap.insert(st);
+                /* String[] cmd = st.split(" ");
                 if (cmd.length == 0) {
                     System.err.println("Error parsing: " + st);
                     return;
@@ -51,10 +53,13 @@ public class RedBlackDriverCode {
                     default:
                         System.err.println("Unknown command: " + cmd[0]);
 
-                }
+                } */
 
 
             }
+            /* for (String s : heap.elementsGreaterThanEqualTo("Zachary W")) {
+                System.out.println(s);
+            } */
         } catch (FileNotFoundException e) {
             System.err.println("Input file Not found. " + file.getAbsolutePath());
         } catch (NullPointerException ne) {
