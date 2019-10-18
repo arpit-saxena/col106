@@ -4,6 +4,7 @@ import RedBlack.RedBlackNode.Color;
 
 public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E>  {
     RedBlackNode<T, E> root;
+    int size = 0;
 
     @Override
     public void insert(T key, E value) {
@@ -15,6 +16,7 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E>  {
 
         RedBlackNode<T, E> problemNode = root.insert(key, value);
         if (problemNode != null) problemNode.fixUp(this);
+        size++;
     }
 
     @Override

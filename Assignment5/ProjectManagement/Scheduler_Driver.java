@@ -76,7 +76,10 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                     case "NEW_USER":
                     case "NEW_PROJECTUSER":
                     case "NEW_PRIORITY":
-                        timed_report(cmd);
+                        qstart_time = System.nanoTime();
+                        ArrayList<JobReport_> report = timed_report(cmd);
+                        qend_time = System.nanoTime();
+                        System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
                         break;
                     case "NEW_TOP":
                         qstart_time = System.nanoTime();
@@ -93,13 +96,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                     default:
                         System.err.println("Unknown command: " + cmd[0]);
                 }
-
-                if (userReport != null) {
-                    for (UserReport_ report : userReport) {
-                        System.out.println(report);
-                    }
-                }
-
             }
 
 
@@ -116,39 +112,22 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
     @Override
     public ArrayList<JobReport_> timed_report(String[] cmd) {
-        long qstart_time, qend_time;
         ArrayList<JobReport_> res = null;
         switch (cmd[0]) {
             case "NEW_PROJECT":
-                qstart_time = System.nanoTime();
                 res = handle_new_project(cmd);
-                qend_time = System.nanoTime();
-                System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
                 break;
             case "NEW_USER":
-                qstart_time = System.nanoTime();
                 res = handle_new_user(cmd);
-                qend_time = System.nanoTime();
-                System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
-
                 break;
             case "NEW_PROJECTUSER":
-                qstart_time = System.nanoTime();
                 res = handle_new_projectuser(cmd);
-                qend_time = System.nanoTime();
-                System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
                 break;
             case "NEW_PRIORITY":
-                qstart_time = System.nanoTime();
                 res = handle_new_priority(cmd[1]);
-                qend_time = System.nanoTime();
-                System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
                 break;
         }
 
-        for(JobReport_ job : res) {
-            System.out.println(job);
-        }
         return res;
     }
 
@@ -160,6 +139,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
     List<Job> jobsDone = new ArrayList<Job>();
     MaxHeap<User> allUsers = new MaxHeap<>();
     MaxHeap<Project> allProjects = new MaxHeap<>();
+    MaxHeapRB<Integer, Job> allNotReadyJobs = new MaxHeapRB<>();
 
     // For jobs that weren't able to be executed due to budget constraints
     // Project name is key along with a list of the jobs
@@ -218,22 +198,14 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
     private ArrayList<JobReport_> handle_new_priority(String s) {
         int priority = Integer.parseInt(s);
         ArrayList<MaxHeap<Job>.Node> nodeList = new ArrayList<>();
-        ArrayList<JobReport_> list = new ArrayList<>();
+        ArrayList<JobReport_> list = new ArrayList<>( 
+            allNotReadyJobs.elementsGreaterThanEqualTo(currPriority -> {
+                return currPriority - priority;
+            }));
 
-        while (jobQueue.size() > 0 && jobQueue.peekMax().project().priority >= priority) {
-            MaxHeap<Job>.Node node = jobQueue.extractMaxNode();
-            list.add(node.key);
-            nodeList.add(node);
-        }
-        jobQueue.insert(nodeList);
-
-        projectsWithNotReadyJobs.forEach(project -> {
-            list.addAll(project.notReadyJobsRB.elementsGreaterThanEqualTo(
-                job -> {
-                    return job.project().priority - priority;
-                }
-            ));
-        });
+        list.addAll(jobQueue.elementsGreaterThanEqualTo(job -> {
+            return job.project().priority - priority;
+        }));
         return list;
     }
 
@@ -407,7 +379,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                 return;
             }
             job.project().notReadyJobs.insert(job);
-            job.project().notReadyJobsRB.insert(job);
+            allNotReadyJobs.insert(job.project().priority, job);
             
             // If the project has only 1 non ready job now, it must have had no non ready
             // jobs before, so has to be added to the list of all projects with non ready
@@ -427,7 +399,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                 return;
             }
             job.project().notReadyJobs.insert(job);
-            job.project().notReadyJobsRB.insert(job);
+            allNotReadyJobs.insert(job.project().priority, job);
             
             // If the project has only 1 non ready job now, it must have had no non ready
             // jobs before, so has to be added to the list of all projects with non ready
@@ -482,21 +454,20 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         }
         System.out.println("------------------------");
         
-        MaxHeap<Job> jobsNotDone = new MaxHeap<>();
+        MaxHeapRB<Project, Job> jobsNotDone = new MaxHeapRB<>();
         projectsWithNotReadyJobs.forEach(project -> {
-            project.notReadyJobs.forEachNode(jobNode -> {
-                jobsNotDone.insert(jobNode);
-            });
+            MaxHeap<Job>.Node node;
+            while ((node = project.notReadyJobs.extractMaxNode()) != null) {
+                jobsNotDone.insert(project, node.key);
+            }
         });
         
         System.out.println("Unfinished jobs: ");
-        Job job;
-        int numUnfinishedJobs = 0;
-        while ((job = jobsNotDone.extractMax()) != null) {
+        ArrayList<Job> jobList = jobsNotDone.topNumElements(-1);
+        for (Job job : jobList) {
             System.out.println(job);
-            numUnfinishedJobs++;
         }
-        System.out.println("Total unfinished jobs: " + numUnfinishedJobs);
+        System.out.println("Total unfinished jobs: " + jobList.size());
         System.out.println("--------------STATS DONE---------------");
     }
 
@@ -520,6 +491,14 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         });
         projectsWithNotReadyJobs.delete(project.name);
         project.notReadyJobs = new MaxHeap<>();
+
+        MaxHeapRB<Integer, Job> newAllNotReadyJobs = new MaxHeapRB<>();
+        allNotReadyJobs.forEach(job -> {
+            if (!job.project().name.equals(projectName)) {
+                newAllNotReadyJobs.insert(job.project().priority, job);
+            }
+        });
+        allNotReadyJobs = newAllNotReadyJobs;
     }
 
     @Override

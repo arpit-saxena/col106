@@ -12,7 +12,7 @@ import RedBlack.RedBlackNode;
  * in O(k + log n) time, where n elements are there in the heap
  * @param <T>
  */
-public class MaxHeapRB<T extends Comparable> {
+public class MaxHeapRB<T extends Comparable, E> {
     static int creationTime = 0;
     int size = 0;
 
@@ -20,36 +20,22 @@ public class MaxHeapRB<T extends Comparable> {
         return size;
     }
 
-    class Node implements Comparable<Node> {
-        T val;
-        private int time;
-
-        Node(T val) {
-            this.val = val;
-            time = creationTime;
-            creationTime++;
-            size++;
-        }
-
-        public int compareTo(Node node) {
-            int valCompare = val.compareTo(node.val);
-            if (valCompare != 0) return valCompare;
-            return -(time - node.time);
-        }
+    public static interface Consumer<E> {
+        public void consume(E val);
     }
 
-    private RBTree<Node, Object> rbt = new RBTree<>();
+    private RBTree<T, E> rbt = new RBTree<>();
 
-    public void insert(T element) {
-        rbt.insert(new Node(element), null);
+    public void insert(T key, E val) {
+        rbt.insert(key, val);
     }
 
     /**
      * @param k the number of largest elements to return
      * @return An ArrayList with k largest elements, in descending order
      */
-    public ArrayList<T> topNumElements(int k) {
-        ArrayList<T> top = new ArrayList<>();
+    public ArrayList<E> topNumElements(int k) {
+        ArrayList<E> top = new ArrayList<>();
         if (rbt.root == null) return top;
         topElementsHelper(top, k, rbt.root);
         return top;
@@ -65,17 +51,17 @@ public class MaxHeapRB<T extends Comparable> {
      * @param comparator All values are added for which comparator returns >= 0
      * @return
      */
-    public ArrayList<T> elementsGreaterThanEqualTo(Comparator<T> comparator) {
-        ArrayList<T> ret = new ArrayList<>();
+    public ArrayList<E> elementsGreaterThanEqualTo(Comparator<T> comparator) {
+        ArrayList<E> ret = new ArrayList<>(rbt.size + 1);
         if (rbt.root == null) return ret;
-        RedBlackNode<Node, Object> curr = rbt.root;
+        RedBlackNode<T, E> curr = rbt.root;
         while (curr != null) {
-            int comparisonResult = comparator.compareTo(curr.key.val);
+            int comparisonResult = comparator.compareTo(curr.key);
 
             // val <= curr.key => Have to add whole right subtree
             if (comparisonResult >= 0 && curr.right != null) {
                 topElementsHelper(ret, -1, curr.right);
-                ret.add(curr.key.val);
+                ret.addAll(curr.getValues());
                 curr = curr.left;
             } else { // val > curr.key => Greater than whole left subtree. Go right
                 curr = curr.right;
@@ -85,17 +71,34 @@ public class MaxHeapRB<T extends Comparable> {
     }
 
     /**
-     * Helper to insert k largest elements into the ArrayList top of all
-     * elements in the tree rooted at node, in descending order.
-     * All elements in descending order are added if k == -1
+     * Helper to insert k largest values into the ArrayList top of all
+     * key-value pairs in the tree rooted at node, in descending order (of keys).
+     * All values in descending order are added if k == -1
      */
-    private void topElementsHelper(ArrayList<T> top, int k, 
-                                    RedBlackNode<Node, Object> node
+    private void topElementsHelper(ArrayList<E> top, int k, 
+                                    RedBlackNode<T, E> node
     ){
         if (k != -1 && top.size() >= k) return;
         if (node.right != null) topElementsHelper(top, k, node.right);
         if (k != -1 && top.size() >= k) return;
-        top.add(node.key.val);
+        top.addAll(node.getValues());
         if (node.left != null) topElementsHelper(top, k, node.left);
+    }
+
+    public void forEach(Consumer<E> consumer) {
+        inOrder(consumer, rbt.root);
+    }
+
+    /**
+     * Performs in-order traversal of the RBTree rooted at node, performing
+     * the function consumer.consume() at each value stored in the tree
+     */
+    private void inOrder(Consumer<E> consumer, RedBlackNode<T, E> node) {
+        if (node == null) return;
+        inOrder(consumer, node.left);
+        node.getValues().forEach(val -> {
+            consumer.consume(val);
+        });
+        inOrder(consumer, node.right);
     }
 }

@@ -15,7 +15,6 @@ public class Project implements Comparable<Project> {
     // Jobs of this project that weren't able to be executed due to budget limits
     /* public List<MaxHeap<Job>.Node> notReadyJobs = new LinkedList<>(); */
     public MaxHeap<Job> notReadyJobs = new MaxHeap<>();
-    public MaxHeapRB<Job> notReadyJobsRB = new MaxHeapRB<>();
 
     // All jobs of the project
     public ArrayList<JobReport_> allJobs = new ArrayList<>();

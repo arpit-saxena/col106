@@ -11,6 +11,10 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
         void consume(T val);
     }
 
+    public static interface Comparator<T> {
+        int compareTo(T val);
+    }
+
     /**
      * Internal representation of an element
      * Used to implement the FIFO property of two elements with same keys
@@ -49,6 +53,8 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
                                     //a               nd make heap
         int n = list.size();
         int k = elements.size();
+
+        if (k == 0) return;
         int factor = 5;
 
         if (
@@ -64,7 +70,7 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
             list.addAll(elements);
             heapify();
         } else {
-            for (Node node : list) {
+            for (Node node : elements) {
                 insert(node);
             }
         }
@@ -228,5 +234,55 @@ public class MaxHeap<T extends Comparable> implements PriorityQueueInterface<T> 
 
     public void clear() {
         list.clear();
+    }
+
+    public ArrayList<T> elementsGreaterThanEqualTo(Comparator<T> comparator) {
+        ArrayList<T> ret = new ArrayList<>(list.size() + 1);
+        if (list.size() == 0) return ret;
+        ArrayList<Integer> indices = new ArrayList<>();
+        indices.add(0);
+        int numElementsCurrentLevel = 1;
+        while (numElementsCurrentLevel > 0) {
+            int newLevel = 0;
+            ArrayList<Integer> newIndices = new ArrayList<>();
+            for (int i = 0; i < numElementsCurrentLevel; i++) {
+                int index = indices.get(i);
+                Node node = list.get(index);
+                if (comparator.compareTo(node.key) >= 0) {
+                    ret.add(node.key);
+                    if (2 * index + 1 < list.size()) {
+                        newIndices.add(2 * index + 1);
+                        newLevel++;
+                    }
+                    if (2 * index + 2 < list.size()) {
+                        newIndices.add(2 * index + 2);
+                        newLevel++;
+                    }
+                }
+            }
+            indices = newIndices;
+            numElementsCurrentLevel = newLevel;
+        }
+        return ret;
+    }
+
+    private void greaterThanHelper(ArrayList<T> ret, Comparator<T> comparator
+                                        , int index
+    ){
+        Node node = null;
+        try {
+            node = list.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            return;
+        }
+        if (node == null) return;
+        int comparisonResult = comparator.compareTo(node.key);
+
+        // thisValue >= value supplied
+        if (comparisonResult >= 0) {
+            ret.add(node.key);
+            greaterThanHelper(ret, comparator, 2 * index + 1);
+            greaterThanHelper(ret, comparator, 2 * index + 2);
+        }
     }
 }

@@ -20,10 +20,10 @@ public class RedBlackDriverCode {
         try {
             br = new BufferedReader(new FileReader(file));
 
-            MaxHeapRB<String> heap = new MaxHeapRB<>();
+            MaxHeapRB<String, String> heap = new MaxHeapRB<>();
             String st;
             while ((st = br.readLine()) != null) {
-                heap.insert(st);
+                heap.insert(st, st);
                 /* String[] cmd = st.split(" ");
                 if (cmd.length == 0) {
                     System.err.println("Error parsing: " + st);
@@ -57,9 +57,9 @@ public class RedBlackDriverCode {
 
 
             }
-            /* for (String s : heap.elementsGreaterThanEqualTo("Zachary W")) {
-                System.out.println(s);
-            } */
+            heap.forEach(string -> {
+                System.out.println(string);
+            });
         } catch (FileNotFoundException e) {
             System.err.println("Input file Not found. " + file.getAbsolutePath());
         } catch (NullPointerException ne) {
