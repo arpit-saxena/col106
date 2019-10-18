@@ -41,7 +41,7 @@ public class Trie<T> implements TrieInterface<T> {
     @Override
     public void printTrie(TrieNode trieNode) {
         if (trieNode != null) {
-            trieNode.printAll();
+            trieNode.printAllValues();
         }
     }
 

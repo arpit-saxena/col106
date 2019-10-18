@@ -4,13 +4,7 @@ import java.io.*;
 import java.net.URL;
 
 public class TrieDriverCode {
-    private static final long MEGABYTE = 1024L * 1024L;
-
-    public static long bytesToMegabytes(long bytes) {
-        return bytes / MEGABYTE;
-    }
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Trie trie = new Trie();
         File file;
         if (args.length == 0) {
@@ -28,27 +22,6 @@ public class TrieDriverCode {
         }
 
         String st;
-
-        Runtime runtime = Runtime.getRuntime();
-        // Run the garbage collector
-        runtime.gc();
-        
-        long startTime = System.nanoTime();
-        while (true)  {
-            if ((st = br.readLine()) == null) break;
-            String contact = st;
-            Person person = new Person(contact.split(",")[0].trim(), contact.split(",")[1].trim());
-            //System.out.println("Inserting: " + person.getName());
-            trie.insert(person.getName(), person);
-        }
-        long endTime = System.nanoTime();
-        System.out.println("Time: " + (endTime - startTime) / 1e9 + "s" );
-        long memory = runtime.totalMemory() - runtime.freeMemory();
-        System.out.println("Memory: " + memory / (1024L * 1024L)+ "MB");
-    
-        
-
-        /*
         while (true) {
             try {
                 if ((st = br.readLine()) == null) break;
@@ -111,8 +84,6 @@ public class TrieDriverCode {
                 break;
             }
         }
-        */
-        
     }
 
 }

@@ -84,8 +84,15 @@ public class TrieNode<T> implements NodeInterface<T> {
      * Prints all strings stored in the trie rooted at this node
      */
     public void printAll() {
-        forEachString(value -> System.out.println(value.toString()), 
+        forEachString(string -> System.out.println(string), 
             new StringBuilder());
+    }
+
+    /**
+     * Prints all values stored in the trie rooted at this node
+     */
+    public void printAllValues() {
+        forEachValue(value -> System.out.println(value));
     }
 
     /**
