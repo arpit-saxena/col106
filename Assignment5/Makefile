@@ -21,9 +21,13 @@ pq: pqbuild pqcheck pqclean
 pm: pmbuild pmcheck pmclean
 
 ENTRY=2018MT10742
-handin:
+FORCE:
+
+src: FORCE
 	@mkdir -p src
-	@rsync -aP --exclude=src/ --exclude=$(ENTRY)_assignment5.zip.b64 --exclude=*/INP2 * src/
+	@rsync -a --exclude-from=exclude-list * src/
+
+handin: src	
 	@zip -r $(ENTRY)_assignment5.zip src/
 	@base64 $(ENTRY)_assignment5.zip > $(ENTRY)_assignment5.zip.b64
 	@rm $(ENTRY)_assignment5.zip
@@ -77,6 +81,9 @@ pqclean:
 	-@rm PriorityQueue/tmp -f
 	-@rm PriorityQueue/*.class -f
 
+PM_INPUT_FILE = INP-ass4
+PM_EXPECTED_OUTPUT_FILE = EXPECTED_OUTPUT-ass4
+
 pmbuild:
 	@echo -e "\n**********"
 	@echo "Building ProjectManagement"
@@ -86,9 +93,9 @@ pmcheck: pmbuild
 	@echo -e "\n**********"
 	@echo "Checking ProjectManagement"
 	@echo "**********"
-	@$(JAVA) ProjectManagement.Scheduler_Driver ProjectManagement/$(INPUT_FILE) >ProjectManagement/tmp
-	@cd ProjectManagement && sed -i 's/[^[:print:]]//g' tmp && sed -i 's/[^[:print:]]//g' $(EXPECTED_OUTPUT_FILE)
-	@diff -i ProjectManagement/tmp ProjectManagement/$(EXPECTED_OUTPUT_FILE) && echo 'PM SUCCESS' || $(call logpmerror)
+	@$(JAVA) ProjectManagement.Scheduler_Driver ProjectManagement/$(PM_INPUT_FILE) >ProjectManagement/tmp
+	@cd ProjectManagement && sed -i 's/[^[:print:]]//g' tmp && sed -i 's/[^[:print:]]//g' $(PM_EXPECTED_OUTPUT_FILE)
+	@diff -i ProjectManagement/tmp ProjectManagement/$(PM_EXPECTED_OUTPUT_FILE) && echo 'PM SUCCESS' || $(call logpmerror)
 pmclean:
 	-@rm ProjectManagement/tmp -f
 	-@rm ProjectManagement/*.class -f

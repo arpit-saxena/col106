@@ -1,0 +1,17 @@
+/large
+*.csv
+*tmp*
+*.py
+names*
+/INP
+*.txt
+*.class
+/src/
+/exclude-list
+/out
+/OUTPUT
+Scheduler_Grader*
+*INP*
+*EXPECTED_OUTPUT*
+MyDriver.java
+*.zip.b64
