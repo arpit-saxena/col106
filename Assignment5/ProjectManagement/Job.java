@@ -66,7 +66,6 @@ public class Job implements Comparable<Job>, JobReport_ {
         return project.priority - job.project.priority;
     }
 
-    // TODO: Remove ArrivalTime , Priority from here; not required
     @Override
     public String toString() {
         return 
@@ -78,12 +77,8 @@ public class Job implements Comparable<Job>, JobReport_ {
             + (isCompleted ? "COMPLETED" : "REQUESTED")
             + ", execution_time="
             + executionTime
-            + ", arrival_time="
-            + arrivalTime
             + ", end_time="
             + (endTime == -1 ? "null" : endTime)
-            + ", priority="
-            + project.priority
             + ", name='"
             + name
             + "'}";
@@ -99,7 +94,6 @@ public class Job implements Comparable<Job>, JobReport_ {
         return project.name;
     }
 
-    // TODO: Confirm if budget() is supposed to return executionTime
     @Override
     public int budget() {
         return executionTime;
