@@ -51,6 +51,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
                 long qstart_time, qend_time;
                 ArrayList<UserReport_> userReport = null;
+                ArrayList<JobReport_> report = null;
 
                 switch (cmd[0]) {
                     case "PROJECT":
@@ -77,7 +78,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                     case "NEW_PROJECTUSER":
                     case "NEW_PRIORITY":
                         qstart_time = System.nanoTime();
-                        ArrayList<JobReport_> report = timed_report(cmd);
+                        report = timed_report(cmd);
                         qend_time = System.nanoTime();
                         System.out.println("Time elapsed (ns): " + (qend_time - qstart_time));
                         break;
@@ -95,6 +96,11 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                         break;
                     default:
                         System.err.println("Unknown command: " + cmd[0]);
+                }
+
+                if (report != null)
+                for (JobReport_ rep : report) {
+                    System.out.println(rep);
                 }
             }
 
@@ -244,6 +250,13 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
                 }
             }
         }
+        
+        jobs.sort((job1, job2) -> {
+            if (job1.completion_time() != -1 && job2.completion_time() != -1) {
+                return job1.completion_time() - job2.completion_time();
+            }
+            return (job1.arrival_time() - job2.arrival_time());
+        });
 
         return jobs;
     }
