@@ -179,19 +179,22 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
             }
         });
 
-        // jobs to flush
-        MaxHeap<Job> flushJobs = new MaxHeap<>();
-        flushJobs.insert(potJobs);
-        MaxHeap<Job>.Node node;
-        while (flushJobs.size() > 0) {
-            node = flushJobs.extractMaxNode();
-            if (!executeIfPossible(node.key)) {
-                newQueue.add(node);
+        // Don't have to do anything if no potential job to flush
+        if (potJobs.size() > 0) {
+            // jobs to flush
+            MaxHeap<Job> flushJobs = new MaxHeap<>();
+            flushJobs.insert(potJobs);
+            MaxHeap<Job>.Node node;
+            while (flushJobs.size() > 0) {
+                node = flushJobs.extractMaxNode();
+                if (!executeIfPossible(node.key)) {
+                    newQueue.add(node);
+                }
             }
-        }
 
-        jobQueue.clear();
-        jobQueue.insert(newQueue);
+            jobQueue.clear();
+            jobQueue.insert(newQueue);
+        }
     }
     
 
