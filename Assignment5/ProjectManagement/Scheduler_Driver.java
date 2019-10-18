@@ -138,7 +138,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
     int globalTime = 0;
     List<Job> jobsDone = new ArrayList<Job>();
     MaxHeap<User> allUsers = new MaxHeap<>();
-    MaxHeap<Project> allProjects = new MaxHeap<>();
     MaxHeapRB<Integer, Job> allNotReadyJobs = new MaxHeapRB<>();
 
     // For jobs that weren't able to be executed due to budget constraints
@@ -383,13 +382,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
             }
             job.project().notReadyJobs.insert(job);
             allNotReadyJobs.insert(job.project().priority, job);
-            
-            // If the project has only 1 non ready job now, it must have had no non ready
-            // jobs before, so has to be added to the list of all projects with non ready
-            // jobs
-            if (job.project().notReadyJobs.size() == 1) {
-                projectsWithNotReadyJobs.insert(job.project().name, job.project());
-            }
             System.out.println("Un-sufficient budget.");
         }
     }
@@ -403,13 +395,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
             }
             job.project().notReadyJobs.insert(job);
             allNotReadyJobs.insert(job.project().priority, job);
-            
-            // If the project has only 1 non ready job now, it must have had no non ready
-            // jobs before, so has to be added to the list of all projects with non ready
-            // jobs
-            if (job.project().notReadyJobs.size() == 1) {
-                projectsWithNotReadyJobs.insert(job.project().name, job.project());
-            }
         }
     }
 
@@ -458,7 +443,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         System.out.println("------------------------");
         
         MaxHeapRB<Project, Job> jobsNotDone = new MaxHeapRB<>();
-        projectsWithNotReadyJobs.forEach(project -> {
+        projectsTrie.forEach(project -> {
             MaxHeap<Job>.Node node;
             while ((node = project.notReadyJobs.extractMaxNode()) != null) {
                 jobsNotDone.insert(project, node.key);
@@ -492,7 +477,6 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         project.notReadyJobs.forEach(jobNode -> {
             jobQueue.insert(jobNode);
         });
-        projectsWithNotReadyJobs.delete(project.name);
         project.notReadyJobs = new MaxHeap<>();
 
         MaxHeapRB<Integer, Job> newAllNotReadyJobs = new MaxHeapRB<>();
@@ -612,6 +596,5 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
         Project project = new Project(projectName, projectPriority, projectBudget);
         projectsTrie.insert(projectName, project);
-        allProjects.insert(project);
     }
 }
