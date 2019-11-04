@@ -1,3 +1,4 @@
 *.class
 ./Assignment2/src
 ./Assignment2/tests/output.txt
+**/.vscode/
