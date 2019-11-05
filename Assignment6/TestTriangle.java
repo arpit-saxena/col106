@@ -1,7 +1,16 @@
 import static org.junit.Assert.*;
+
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestTriangle {
+
+    @Before
+    public void reset() {
+        Point.resetStatics();
+        Edge.resetStatics();
+        Triangle.resetStatics();
+    }
 
     @Test
     public void testConstruction() {
@@ -87,5 +96,35 @@ public class TestTriangle {
 
         p3.z = 0.0f; p3.x = 0.5f; p3.y = 0.5f;
         assertAllInvalidTriangle(p1, p2, p3);
+    }
+
+    @Test
+    public void testVertexEdgeLists() {
+        BasicPoint p1 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 0.0f, 1.0f);
+
+        Triangle t = new Triangle(p1, p2, p3);
+        Point[] p = t.vertices;
+        Edge[] e = t.edges;
+
+        Triangle[] tArr = new Triangle[]{t};
+        for (int i = 0; i < 3; i++) {
+            assertArrayEquals(tArr, p[i].neighborTriangles.toArray());
+            assertArrayEquals(tArr, e[i].neighborTriangles.toArray());
+        }
+        assertArrayEquals(new Triangle[]{}, t.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{}, t.extendedNeighborTriangles.toArray());
+
+        BasicPoint p4 = new BasicPoint(0.0f, 0.0f, 0.0f);
+        Triangle t2 = new Triangle(p4, p2, p3);
+        p = t2.vertices;
+        e = t2.edges;
+        assertArrayEquals(new Triangle[]{t2}, p[0].neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t, t2}, p[1].neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t, t2}, p[2].neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t, t2}, e[0].neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t2}, e[1].neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t2}, e[2].neighborTriangles.toArray());
     }
 }

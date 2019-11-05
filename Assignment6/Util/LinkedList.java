@@ -11,6 +11,10 @@ public class LinkedList<T> {
         }
     }
 
+    public interface Consumer<T> {
+        public void consume(T obj);
+    }
+
     Node head = null;
     Node tail = null;
     int size = 0;
@@ -59,5 +63,11 @@ public class LinkedList<T> {
             curr = curr.next;
         }
         return ret;
+    }
+
+    public void forEach(Consumer<T> consumer) {
+        for (Node curr = head; curr != null; curr = curr.next) {
+            consumer.consume(curr.value);
+        }
     }
 }

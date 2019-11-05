@@ -58,4 +58,19 @@ public class TestLinkedList {
         assertSame(list.head, node2);
         assertSame(list.tail, node2);
     }
+
+    @Test
+    public void testForEach() {
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            list.add(i);
+        }
+
+        LinkedList<Integer> other = new LinkedList<>();
+        list.forEach(value -> {
+            other.add(value);
+        });
+
+        assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, other.toArray());
+    }
 }

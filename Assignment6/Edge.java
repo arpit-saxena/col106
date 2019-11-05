@@ -1,4 +1,5 @@
 import Util.ComparablePair;
+import Util.ArrayList;
 import Util.RBTree;
 
 public class Edge implements EdgeInterface {
@@ -6,6 +7,10 @@ public class Edge implements EdgeInterface {
 
     static RBTree<ComparablePair<Point, Point>, Edge> allEdges
         = new RBTree<>();
+
+    public static void resetStatics() {
+        allEdges = new RBTree<>();
+    }
 
     public static Edge getEdge(Point p1, Point p2) {
         ComparablePair<Point, Point> pair;
@@ -25,9 +30,15 @@ public class Edge implements EdgeInterface {
         return new Edge(pair);
     }
 
+    public ArrayList<Triangle> neighborTriangles = new ArrayList<>();
+
     private Edge(ComparablePair<Point, Point> pair) {
         endPoints = new Point[]{pair.first, pair.second};
         allEdges.insert(pair, this);
+        pair.first.neighborPoints.add(pair.second);
+        pair.second.neighborPoints.add(pair.first);
+        pair.first.neighborEdges.add(this);
+        pair.second.neighborEdges.add(this);
     }
 
     public PointInterface[] edgeEndPoints() {

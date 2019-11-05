@@ -1,7 +1,12 @@
+import Util.ArrayList;
 import Util.RBTree;
 
 public class Point extends BasicPoint {
     static RBTree<BasicPoint, Point> allPoints = new RBTree<>();
+
+    public static void resetStatics() {
+        allPoints = new RBTree<>();
+    }
 
     public static Point getPoint(float x, float y, float z) {
         return getPoint(new BasicPoint(x, y, z));
@@ -16,6 +21,10 @@ public class Point extends BasicPoint {
 
         return node.getValue();
     }
+
+    public ArrayList<Point> neighborPoints = new ArrayList<>();
+    public ArrayList<Edge> neighborEdges = new ArrayList<>();
+    public ArrayList<Triangle> neighborTriangles = new ArrayList<>();
 
     // Called only when given point does not exist
     private Point(BasicPoint point) {

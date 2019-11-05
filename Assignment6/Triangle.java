@@ -1,3 +1,5 @@
+import Util.ArrayList;
+
 class WrongNumberArgsException extends IllegalArgumentException {
     public WrongNumberArgsException(String s) {super(s);}
 }
@@ -7,10 +9,20 @@ class InvalidTriangleException extends IllegalArgumentException {
 }
 
 public class Triangle {
-    Point[] vertices = new Point[3];
-    Edge[] edges = new Edge[3];
+    Point[] vertices;
+    Edge[] edges;
+    int creationTime;
+
+    ArrayList<Triangle> neighborTriangles = new ArrayList<>();
+    ArrayList<Triangle> extendedNeighborTriangles = new ArrayList<>();
+    private static int globalCounter = 0;
+
+    public static void resetStatics() {
+        globalCounter = 0;
+    }
 
     public Triangle(BasicPoint... basicPoints) {
+        creationTime = globalCounter++;
         if (basicPoints.length != 3) {
             throw new WrongNumberArgsException(
                 "Expected 3 points, got " + basicPoints.length
@@ -19,6 +31,21 @@ public class Triangle {
             throw new InvalidTriangleException(
                 "Given points don't form a valid triangle"
             );
+        }
+
+        vertices = new Point[3];
+        for (int i = 0; i < 3; i++) {
+            vertices[i] = Point.getPoint(basicPoints[i]);
+            vertices[i].neighborTriangles.add(this);
+        }
+
+        edges = new Edge[3];
+        for (int i = 0; i < 3; i++) {
+            edges[i] = Edge.getEdge(
+                vertices[(i + 1) % 3],
+                vertices[(i + 2) % 3]
+            );
+            edges[i].neighborTriangles.add(this);
         }
     }
 
