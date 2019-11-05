@@ -220,4 +220,65 @@ public class TestTriangle {
         assertArrayEquals(new Triangle[]{t1, t2, t3}, t4.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t1, t2, t3}, t4.extendedNeighborTriangles.toArray());
     }
+
+    /**
+     *      
+     *         . p6
+     * p3 .            .p5
+     * p1 .    . p2    .p4
+     */
+    @Test
+    public void testBoundary() {
+        BasicPoint p1 = new BasicPoint(0.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p4 = new BasicPoint(2.0f, 0.0f, 0.0f);
+        BasicPoint p5 = new BasicPoint(2.0f, 1.0f, 0.0f);
+        BasicPoint p6 = new BasicPoint(1.0f, 2.0f, 0.0f);
+
+        Triangle t1 = new Triangle(p1, p2, p3);
+        assertEquals(1, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());
+
+        Triangle t2 = new Triangle(p2, p4, p5);
+        assertEquals(1, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());
+
+        Triangle t3 = new Triangle(p3, p5, p6);
+        assertEquals(1, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());
+
+        Triangle t4 = new Triangle(p3, p2, p5);
+        assertEquals(2, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());
+    }
+
+    @Test
+    public void testBoundary2() {
+        BasicPoint p1 = new BasicPoint(0.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p4 = new BasicPoint(0.0f, 0.0f, 1.0f);
+        
+        new Triangle(p1, p2, p3);
+        assertEquals(1, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());
+
+        new Triangle(p1, p2, p4);
+        assertEquals(2, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());        
+
+        new Triangle(p2, p3, p4);
+        assertEquals(2, Edge.maxTrianglesNeighbor);
+        assertEquals(2, Edge.typeMesh());        
+
+        new Triangle(p1, p3, p4);
+        assertEquals(2, Edge.maxTrianglesNeighbor);
+        assertEquals(1, Edge.typeMesh());        
+
+        BasicPoint p5 = new BasicPoint(0.0f, 0.0f, -1.0f);
+        new Triangle(p1, p2, p5);
+        assertEquals(3, Edge.maxTrianglesNeighbor);
+        assertEquals(3, Edge.typeMesh());
+    }
 }

@@ -1,4 +1,5 @@
 import Util.ComparablePair;
+import Util.LinkedList;
 import Util.ArrayList;
 import Util.RBTree;
 
@@ -7,9 +8,28 @@ public class Edge implements EdgeInterface {
 
     static RBTree<ComparablePair<Point, Point>, Edge> allEdges
         = new RBTree<>();
+    static LinkedList<Edge> boundaryEdges = new LinkedList<>();
+
+    // Max number of neighbor triangles of an edge
+    static int maxTrianglesNeighbor = 0;
+
+    public static void setTrianglesNeighborStats(int count) {
+        if (count > maxTrianglesNeighbor) {
+            maxTrianglesNeighbor = count;
+        }
+    }
+
+    public static int typeMesh() {
+        if (maxTrianglesNeighbor > 2)return 3; // Improper
+        if (boundaryEdges.size() > 0) return 2; // Semi-proper
+        if (maxTrianglesNeighbor == 2) return 1; // Proper
+        return 0; // Not defined
+    } 
 
     public static void resetStatics() {
         allEdges = new RBTree<>();
+        boundaryEdges = new LinkedList<>();
+        maxTrianglesNeighbor = 0;
     }
 
     public static Edge getEdge(Point p1, Point p2) {
@@ -31,6 +51,10 @@ public class Edge implements EdgeInterface {
     }
 
     public ArrayList<Triangle> neighborTriangles = new ArrayList<>();
+
+    // node in boundary linked list if this edge forms a boundary
+    // else null
+    public LinkedList<Edge>.Node boundaryNode = null;
 
     private Edge(ComparablePair<Point, Point> pair) {
         endPoints = new Point[]{pair.first, pair.second};

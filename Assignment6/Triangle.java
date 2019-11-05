@@ -91,6 +91,14 @@ public class Triangle implements Comparable<Triangle> {
 
         for (int i = 0; i < 3; i++) {
             edges[i].neighborTriangles.add(this);
+            if (edges[i].neighborTriangles.size() == 1) {
+                edges[i].boundaryNode = Edge.boundaryEdges.add(edges[i]);
+            } else if (edges[i].neighborTriangles.size() == 2) {
+                Edge.boundaryEdges.delete(edges[i].boundaryNode);
+                edges[i].boundaryNode = null;
+            }
+
+            Edge.setTrianglesNeighborStats(edges[i].neighborTriangles.size());
         }
     }
 
