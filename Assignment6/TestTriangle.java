@@ -10,6 +10,7 @@ public class TestTriangle {
         Point.resetStatics();
         Edge.resetStatics();
         Triangle.resetStatics();
+        ConnectedComponent.resetStatics();
     }
 
     @Test
@@ -280,5 +281,41 @@ public class TestTriangle {
         new Triangle(p1, p2, p5);
         assertEquals(3, Edge.maxTrianglesNeighbor);
         assertEquals(3, Edge.typeMesh());
+    }
+
+    /**
+     *      
+     *         . p6
+     * p3 .            .p5
+     * p1 .    . p2    .p4
+     */
+    @Test
+    public void testConnectedComponents() {
+        BasicPoint p1 = new BasicPoint(0.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p4 = new BasicPoint(2.0f, 0.0f, 0.0f);
+        BasicPoint p5 = new BasicPoint(2.0f, 1.0f, 0.0f);
+        BasicPoint p6 = new BasicPoint(1.0f, 2.0f, 0.0f);
+
+        Triangle t1 = new Triangle(p1, p2, p3);
+        assertEquals(1, ConnectedComponent.count);
+        for (Edge edge : t1.edges) {
+            assertEquals(t1.component, edge.component);
+        }
+
+        Triangle t2 = new Triangle(p2, p4, p5);
+        assertEquals(2, ConnectedComponent.count);
+
+        Triangle t3 = new Triangle(p3, p5, p6);
+        assertEquals(3, ConnectedComponent.count);
+
+        Triangle t4 = new Triangle(p3, p2, p5);
+        assertEquals(1, ConnectedComponent.count);
+        assertEquals(t1.component, t2.component);
+        assertEquals(t1.component, t2.component);
+        assertEquals(t1.component, t3.component);
+        assertEquals(t1.component, t4.component);
+
     }
 }

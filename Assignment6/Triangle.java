@@ -24,6 +24,7 @@ public class Triangle implements Comparable<Triangle> {
     Point[] vertices;
     Edge[] edges;
     int creationTime;
+    ConnectedComponent component = new ConnectedComponent();
 
     ArrayList<Triangle> neighborTriangles = new ArrayList<>();
     ArrayList<Triangle> extendedNeighborTriangles = new ArrayList<>();
@@ -76,6 +77,7 @@ public class Triangle implements Comparable<Triangle> {
                 vertices[(i + 1) % 3],
                 vertices[(i + 2) % 3]
             );
+            component.merge(edges[i].component);
         }
 
         neighborTriangles = ArrayList.merge3Lists(

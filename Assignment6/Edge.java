@@ -51,6 +51,7 @@ public class Edge implements EdgeInterface {
     }
 
     public ArrayList<Triangle> neighborTriangles = new ArrayList<>();
+    public ConnectedComponent component = new ConnectedComponent();
 
     // node in boundary linked list if this edge forms a boundary
     // else null
