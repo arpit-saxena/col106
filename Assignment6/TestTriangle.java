@@ -45,6 +45,26 @@ public class TestTriangle {
         if (!gotException) fail();
     }
 
+    @Test
+    public void testPointOrder() {
+        BasicPoint p1 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 0.0f, 1.0f);
+
+        Triangle t = new Triangle(p1, p2, p3);
+
+        assertTrue(t.vertices[0].compareTo(p3) == 0);
+        assertTrue(t.vertices[1].compareTo(p2) == 0);
+        assertTrue(t.vertices[2].compareTo(p1) == 0);
+
+        p3 = new BasicPoint(1.0f, 0.0f, -1.0f);
+        t = new Triangle(p1, p2, p3);
+
+        assertTrue(t.vertices[0].compareTo(p2) == 0);
+        assertTrue(t.vertices[1].compareTo(p3) == 0);
+        assertTrue(t.vertices[2].compareTo(p1) == 0);
+    }
+
     /**
      * Assert that the formed triangle is valid
      */
@@ -145,11 +165,21 @@ public class TestTriangle {
 
         Triangle t1 = new Triangle(p1, p2, p3);
 
+        assertTrue(
+            Triangle.allTriangles.search(
+                new BasicTriangle(p1, p2, p3)
+            ).getValue() == t1
+        );
         assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{}, t1.extendedNeighborTriangles.toArray());
 
         Triangle t2 = new Triangle(p2, p4, p5);
 
+        assertTrue(
+            Triangle.allTriangles.search(
+                new BasicTriangle(p2, p5, p4)
+            ).getValue() == t2
+        );
         assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t2}, t1.extendedNeighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{}, t2.neighborTriangles.toArray());
@@ -157,6 +187,16 @@ public class TestTriangle {
 
         Triangle t3 = new Triangle(p3, p5, p6);
 
+        assertTrue(
+            Triangle.allTriangles.search(
+                new BasicTriangle(p2, p1, p3)
+            ).getValue() == t1
+        );
+        assertTrue(
+            Triangle.allTriangles.search(
+                new BasicTriangle(p5, p3, p6)
+            ).getValue() == t3
+        );
         assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t2, t3}, t1.extendedNeighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{}, t2.neighborTriangles.toArray());
@@ -166,6 +206,11 @@ public class TestTriangle {
 
         Triangle t4 = new Triangle(p3, p2, p5);
 
+        assertTrue(
+            Triangle.allTriangles.search(
+                new BasicTriangle(p5, p2, p3)
+            ).getValue() == t4
+        );
         assertArrayEquals(new Triangle[]{t4}, t1.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t2, t3, t4}, t1.extendedNeighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t4}, t2.neighborTriangles.toArray());

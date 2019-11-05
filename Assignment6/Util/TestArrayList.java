@@ -101,54 +101,55 @@ public class TestArrayList {
     public void testMergeLists() {
         ArrayList<Integer> a = new ArrayList<>();
         ArrayList<Integer> b = new ArrayList<>();
+        Comparator<Integer> comp = (x, y) -> x - y;
         
         a.add(1); a.add(2);
         b.add(3);
 
         assertArrayEquals(
             new Integer[]{1, 2, 3},
-            ArrayList.merge2Lists(a, b).toArray()
+            ArrayList.merge2Lists(comp, a, b).toArray()
         );
         assertArrayEquals(
             new Integer[]{1, 2, 3},
-            ArrayList.merge2Lists(b, a).toArray()
+            ArrayList.merge2Lists(comp, b, a).toArray()
         );
 
         a.add(3);
         assertArrayEquals(
             new Integer[]{1, 2, 3},
-            ArrayList.merge2Lists(a, b).toArray()
+            ArrayList.merge2Lists(comp, a, b).toArray()
         );
 
         a.add(4); a.add(5);
         b.add(5);
         assertArrayEquals(
             new Integer[]{1, 2, 3, 4, 5},
-            ArrayList.merge2Lists(a, b).toArray()
+            ArrayList.merge2Lists(comp, a, b).toArray()
         );
 
         ArrayList<Integer> c = new ArrayList<>();
         c.add(4); c.add(5); c.add(6);
         assertArrayEquals(
             new Integer[]{1, 2, 3, 4, 5, 6},
-            ArrayList.merge3Lists(a, b, c).toArray()
+            ArrayList.merge3Lists(comp, a, b, c).toArray()
         );
 
         a.add(10); a.add(11);
         b.add(11);
         assertArrayEquals(
             new Integer[]{1, 2, 3, 4, 5, 6, 10, 11},
-            ArrayList.merge3Lists(a, b, c).toArray()
+            ArrayList.merge3Lists(comp, a, b, c).toArray()
         );
 
         a = new ArrayList<>();
         assertArrayEquals(
             b.toArray(), 
-            ArrayList.merge2Lists(a, b).toArray()
+            ArrayList.merge2Lists(comp, a, b).toArray()
         );
         assertArrayEquals(
             b.toArray(), 
-            ArrayList.merge2Lists(b, a).toArray()
+            ArrayList.merge2Lists(comp, b, a).toArray()
         );
     }
 
@@ -165,5 +166,37 @@ public class TestArrayList {
         });
 
         assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, other.toArray());
+    }
+
+    @Test
+    public void testBubbleSort() {
+        assertArrayEquals(
+            new Integer[]{}, 
+            ArrayList.bubbleSort(new Integer[]{})
+        );
+        assertArrayEquals(
+            new Integer[]{1}, 
+            ArrayList.bubbleSort(new Integer[]{1})
+        );
+        assertArrayEquals(
+            new Integer[]{1, 2}, 
+            ArrayList.bubbleSort(new Integer[]{1, 2})
+        );
+        assertArrayEquals(
+            new Integer[]{1, 2}, 
+            ArrayList.bubbleSort(new Integer[]{2, 1})
+        );
+        assertArrayEquals(
+            new Integer[]{1, 2, 3}, 
+            ArrayList.bubbleSort(new Integer[]{3, 2, 1})
+        );
+        assertArrayEquals(
+            new Integer[]{1, 2, 3, 4}, 
+            ArrayList.bubbleSort(new Integer[]{3, 4, 2, 1})
+        );
+        assertArrayEquals(
+            new Integer[]{1, 2, 3, 4}, 
+            ArrayList.bubbleSort(new Integer[]{4, 3, 2, 1})
+        );
     }
 }

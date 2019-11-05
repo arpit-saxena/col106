@@ -84,6 +84,7 @@ public class ArrayList<T> {
      * @return
      */
     public static <T extends Comparable<T>> ArrayList<T> merge2Lists(
+        Comparator<T> comparator,
         ArrayList<T> list1,
         ArrayList<T> list2
     ){
@@ -93,7 +94,7 @@ public class ArrayList<T> {
         int i = 0, j = 0;
         while (i < list1.size() && j < list2.size()) {
             int comp;
-            if ((comp = list1.get(i).compareTo(list2.get(j))) == 0) {
+            if ((comp = comparator.compare(list1.get(i), list2.get(j))) == 0) {
                 i++;
             } else if (comp < 0) {
                 finalList.add(list1.get(i));
@@ -120,12 +121,26 @@ public class ArrayList<T> {
      * Merging done in such a way that same triangle in more than one
      * list is only added once
      */
-    @SafeVarargs
-    public static <T extends Comparable<T>> ArrayList<T> merge3Lists(ArrayList<T>... lists) {
-            if (lists.length != 3) {
-                throw new IllegalArgumentException("Expected 3 lists");
-            }
-            ArrayList<T> temp = merge2Lists(lists[0], lists[1]);
-            return merge2Lists(temp, lists[2]);
+    public static <T extends Comparable<T>> ArrayList<T> merge3Lists(
+        Comparator<T> comparator,
+        ArrayList<T> list1,
+        ArrayList<T> list2,
+        ArrayList<T> list3
+    ){
+            ArrayList<T> temp = merge2Lists(comparator, list1, list2);
+            return merge2Lists(comparator, temp, list3);
         }
+
+    public static <T extends Comparable<T>> T[] bubbleSort(T[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = arr.length - 1; j > i; j--) {
+                if (arr[j].compareTo(arr[j - 1]) < 0) {
+                    T temp = arr[j];
+                    arr[j] = arr[j-1];
+                    arr[j-1] = temp;
+                }
+            }
+        }
+        return arr;
+    }
 }
