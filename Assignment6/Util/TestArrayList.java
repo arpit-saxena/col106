@@ -74,6 +74,14 @@ public class TestArrayList {
     }
 
     @Test
+    public void testZeroCapacity() {
+        ArrayList<Integer> a = new ArrayList<>(0);
+        a.add(0);
+        a = new ArrayList<>(0);
+        a.addAll(new Integer[]{1,2,3});
+    }
+
+    @Test
     public void testConsecutiveAdds() {
         ArrayList<Integer> a = new ArrayList<>();
         Integer[] ins = new Integer[100];
@@ -87,5 +95,75 @@ public class TestArrayList {
         }
 
         assertArrayEquals(ins, a.toArray());
+    }
+
+    @Test
+    public void testMergeLists() {
+        ArrayList<Integer> a = new ArrayList<>();
+        ArrayList<Integer> b = new ArrayList<>();
+        
+        a.add(1); a.add(2);
+        b.add(3);
+
+        assertArrayEquals(
+            new Integer[]{1, 2, 3},
+            ArrayList.merge2Lists(a, b).toArray()
+        );
+        assertArrayEquals(
+            new Integer[]{1, 2, 3},
+            ArrayList.merge2Lists(b, a).toArray()
+        );
+
+        a.add(3);
+        assertArrayEquals(
+            new Integer[]{1, 2, 3},
+            ArrayList.merge2Lists(a, b).toArray()
+        );
+
+        a.add(4); a.add(5);
+        b.add(5);
+        assertArrayEquals(
+            new Integer[]{1, 2, 3, 4, 5},
+            ArrayList.merge2Lists(a, b).toArray()
+        );
+
+        ArrayList<Integer> c = new ArrayList<>();
+        c.add(4); c.add(5); c.add(6);
+        assertArrayEquals(
+            new Integer[]{1, 2, 3, 4, 5, 6},
+            ArrayList.merge3Lists(a, b, c).toArray()
+        );
+
+        a.add(10); a.add(11);
+        b.add(11);
+        assertArrayEquals(
+            new Integer[]{1, 2, 3, 4, 5, 6, 10, 11},
+            ArrayList.merge3Lists(a, b, c).toArray()
+        );
+
+        a = new ArrayList<>();
+        assertArrayEquals(
+            b.toArray(), 
+            ArrayList.merge2Lists(a, b).toArray()
+        );
+        assertArrayEquals(
+            b.toArray(), 
+            ArrayList.merge2Lists(b, a).toArray()
+        );
+    }
+
+    @Test
+    public void testForEach() {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            list.add(i);
+        }
+
+        ArrayList<Integer> other = new ArrayList<>();
+        list.forEach(value -> {
+            other.add(value);
+        });
+
+        assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, other.toArray());
     }
 }

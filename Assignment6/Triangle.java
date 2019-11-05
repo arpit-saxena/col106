@@ -8,7 +8,7 @@ class InvalidTriangleException extends IllegalArgumentException {
     public InvalidTriangleException(String s) {super(s);}
 }
 
-public class Triangle {
+public class Triangle implements Comparable<Triangle> {
     Point[] vertices;
     Edge[] edges;
     int creationTime;
@@ -36,6 +36,18 @@ public class Triangle {
         vertices = new Point[3];
         for (int i = 0; i < 3; i++) {
             vertices[i] = Point.getPoint(basicPoints[i]);
+        }
+
+        extendedNeighborTriangles = ArrayList.merge3Lists(
+            vertices[0].neighborTriangles,
+            vertices[1].neighborTriangles,
+            vertices[2].neighborTriangles
+        );
+        extendedNeighborTriangles.forEach(triangle -> {
+            triangle.extendedNeighborTriangles.add(this);
+        });
+
+        for (int i = 0; i < 3; i++) {
             vertices[i].neighborTriangles.add(this);
         }
 
@@ -45,6 +57,19 @@ public class Triangle {
                 vertices[(i + 1) % 3],
                 vertices[(i + 2) % 3]
             );
+        }
+
+        neighborTriangles = ArrayList.merge3Lists(
+            edges[0].neighborTriangles,
+            edges[1].neighborTriangles,
+            edges[2].neighborTriangles
+        );
+
+        neighborTriangles.forEach(triangle -> {
+            triangle.neighborTriangles.add(this);
+        });
+
+        for (int i = 0; i < 3; i++) {
             edges[i].neighborTriangles.add(this);
         }
     }
@@ -70,5 +95,10 @@ public class Triangle {
                 return Double.compare(d2, d1 + d3) != 0;
             }
         }
+    }
+
+    @Override
+    public int compareTo(Triangle other) {
+        return creationTime - other.creationTime;
     }
 }

@@ -127,4 +127,52 @@ public class TestTriangle {
         assertArrayEquals(new Triangle[]{t2}, e[1].neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t2}, e[2].neighborTriangles.toArray());
     }
+
+    /**
+     *      
+     *         . p6
+     * p3 .            .p5
+     * p1 .    . p2    .p4
+     */
+    @Test
+    public void testNeighborLists() {
+        BasicPoint p1 = new BasicPoint(0.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p4 = new BasicPoint(2.0f, 0.0f, 0.0f);
+        BasicPoint p5 = new BasicPoint(2.0f, 1.0f, 0.0f);
+        BasicPoint p6 = new BasicPoint(1.0f, 2.0f, 0.0f);
+
+        Triangle t1 = new Triangle(p1, p2, p3);
+
+        assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{}, t1.extendedNeighborTriangles.toArray());
+
+        Triangle t2 = new Triangle(p2, p4, p5);
+
+        assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t2}, t1.extendedNeighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{}, t2.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1}, t2.extendedNeighborTriangles.toArray());
+
+        Triangle t3 = new Triangle(p3, p5, p6);
+
+        assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t2, t3}, t1.extendedNeighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{}, t2.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1, t3}, t2.extendedNeighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{}, t3.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1, t2}, t3.extendedNeighborTriangles.toArray());
+
+        Triangle t4 = new Triangle(p3, p2, p5);
+
+        assertArrayEquals(new Triangle[]{t4}, t1.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t2, t3, t4}, t1.extendedNeighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t4}, t2.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1, t3, t4}, t2.extendedNeighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t4}, t3.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1, t2, t4}, t3.extendedNeighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1, t2, t3}, t4.neighborTriangles.toArray());
+        assertArrayEquals(new Triangle[]{t1, t2, t3}, t4.extendedNeighborTriangles.toArray());
+    }
 }
