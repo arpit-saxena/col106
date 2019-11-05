@@ -199,4 +199,19 @@ public class TestArrayList {
             ArrayList.bubbleSort(new Integer[]{4, 3, 2, 1})
         );
     }
+
+    @Test
+    public void testSearch() {
+        Comparator<Integer> comparator = (a, b) -> a - b;
+        ArrayList<Integer> list = new ArrayList<>();
+        list.addAll(new Integer[]{0, 1, 2, 3, 4, 5, 6});
+        for (int i = 0; i <= 6; i++) {
+            assertTrue(list.binarySearch(i, comparator));
+            assertTrue(list.linearSearch(i, comparator));
+        }
+        assertFalse(list.binarySearch(-1, comparator));
+        assertFalse(list.binarySearch(7, comparator));
+        assertFalse(list.linearSearch(-1, comparator));
+        assertFalse(list.linearSearch(7, comparator));
+    }
 }

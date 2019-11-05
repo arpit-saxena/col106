@@ -76,6 +76,40 @@ public class ArrayList<T> {
         }
     }
 
+    public boolean linearSearch(T val, Comparator<T> comparator) {
+        for (int i = 0; i < size; i++) {
+            if (comparator.compare(val, arr[i]) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean binarySearch(T val, Comparator<T> comparator) {
+        int begin = 0;
+        int end = size - 1;
+        while (end >= begin) {
+            int mid = (begin + end) / 2;
+            int res = comparator.compare(arr[mid], val);
+            if (res == 0) {
+                return true;
+            } else if (res < 0) {
+                begin = mid + 1;
+            } else {
+                end = mid - 1;
+            }
+        }
+        return false;
+    }
+
+    public boolean search(T value, Comparator<T> comparator) {
+        if (size < 10) {
+            return linearSearch(value, comparator);
+        }
+
+        return binarySearch(value, comparator);
+    }
+
     /**
      * Assuming triangles in sorted order and the triangle appearing
      * in both the lists are only added once
