@@ -111,6 +111,23 @@ public class ArrayList<T> {
     }
 
     /**
+     * Add at the end if value does not exist already
+     * Uses comparator to check for equality
+     * @param value What to insert
+     * @param comparator Check for equality
+     * @return true, if value was inserted; false if it already existed
+     */
+    public boolean addIfNotExists(T value, Comparator<T> comparator) {
+        for (int i = size - 1; i >= 0; i--) {
+            if (comparator.compare(arr[i], value) == 0) {
+                return false;
+            }
+        }
+        add(value);
+        return true;
+    }
+
+    /**
      * Assuming triangles in sorted order and the triangle appearing
      * in both the lists are only added once
      * @param list1

@@ -1,5 +1,7 @@
 package Util;
 
+import Util.LinkedList.Consumer;
+
 public class RBTree<T extends Comparable<? super T>, E> {
     public static class Node<T extends Comparable<? super T>, E> {
         enum Color {
@@ -219,5 +221,22 @@ public class RBTree<T extends Comparable<? super T>, E> {
         }
 
         return null; //Not found
+    }
+
+    public void forEach(Consumer<E> consumer) {
+        inOrder(consumer, root);
+    }
+
+    /**
+     * Performs in-order traversal of the RBTree rooted at node, performing
+     * the function consumer.consume() at each value stored in the tree
+     */
+    private void inOrder(Consumer<E> consumer, Node<T, E> node) {
+        if (node == null) return;
+        inOrder(consumer, node.left);
+        node.getValues().forEach(val -> {
+            consumer.consume(val);
+        });
+        inOrder(consumer, node.right);
     }
 }

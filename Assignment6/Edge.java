@@ -1,4 +1,5 @@
 import Util.ComparablePair;
+import Util.Comparator;
 import Util.LinkedList;
 import Util.ArrayList;
 import Util.RBTree;
@@ -64,6 +65,16 @@ public class Edge implements EdgeInterface {
         pair.second.neighborPoints.add(pair.first);
         pair.first.neighborEdges.add(this);
         pair.second.neighborEdges.add(this);
+
+        Comparator<ConnectedComponent> comparator = (a, b) -> {
+            return a.equals(b) ? 0 : 1;
+        };
+        if (pair.first.components.addIfNotExists(component, comparator)) {
+            component.infoLatest = false;
+        }
+        if (pair.second.components.addIfNotExists(component, comparator)) {
+            component.infoLatest = false;
+        }
     }
 
     public PointInterface[] edgeEndPoints() {

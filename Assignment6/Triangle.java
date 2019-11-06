@@ -79,6 +79,7 @@ public class Triangle implements Comparable<Triangle> {
             );
             component.merge(edges[i].component);
         }
+        component.addTriangle(this);
 
         neighborTriangles = ArrayList.merge3Lists(
             (t1, t2) -> t1.creationTime - t2.creationTime,

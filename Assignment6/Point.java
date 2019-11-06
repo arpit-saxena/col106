@@ -25,6 +25,7 @@ public class Point extends BasicPoint {
     public ArrayList<Point> neighborPoints = new ArrayList<>();
     public ArrayList<Edge> neighborEdges = new ArrayList<>();
     public ArrayList<Triangle> neighborTriangles = new ArrayList<>();
+    public ArrayList<ConnectedComponent> components= new ArrayList<>();
 
     // Called only when given point does not exist
     private Point(BasicPoint point) {

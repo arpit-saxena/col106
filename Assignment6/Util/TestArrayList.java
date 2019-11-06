@@ -214,4 +214,22 @@ public class TestArrayList {
         assertFalse(list.linearSearch(-1, comparator));
         assertFalse(list.linearSearch(7, comparator));
     }
+
+    @Test
+    public void testAddIfNotExists() {
+        Comparator<Integer> comparator = (a, b) -> a - b;
+        ArrayList<Integer> list = new ArrayList<>();
+        list.addAll(new Integer[]{1, 2, 3});
+        assertFalse(list.addIfNotExists(3, comparator));
+        assertArrayEquals(new Integer[]{1, 2, 3}, list.toArray());
+
+        assertFalse(list.addIfNotExists(2, comparator));
+        assertArrayEquals(new Integer[]{1, 2, 3}, list.toArray());
+
+        assertTrue(list.addIfNotExists(0, comparator));
+        assertArrayEquals(new Integer[]{1, 2, 3, 0}, list.toArray());
+
+        assertTrue(list.addIfNotExists(4, comparator));
+        assertArrayEquals(new Integer[]{1, 2, 3, 0, 4}, list.toArray());
+    }
 }

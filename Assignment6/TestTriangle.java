@@ -1,5 +1,7 @@
 import static org.junit.Assert.*;
 
+import static org.hamcrest.Matchers.*;
+import org.hamcrest.core.CombinableMatcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -290,7 +292,7 @@ public class TestTriangle {
      * p1 .    . p2    .p4
      */
     @Test
-    public void testConnectedComponents() {
+    public void testConnectedComponentCount() {
         BasicPoint p1 = new BasicPoint(0.0f, 0.0f, 0.0f);
         BasicPoint p2 = new BasicPoint(1.0f, 0.0f, 0.0f);
         BasicPoint p3 = new BasicPoint(0.0f, 1.0f, 0.0f);
@@ -317,5 +319,145 @@ public class TestTriangle {
         assertEquals(t1.component, t3.component);
         assertEquals(t1.component, t4.component);
 
+    }
+
+    void assertPointEqual(BasicPoint p1, BasicPoint p2, float delta) {
+        assertEquals(p1.x, p2.x, delta);
+        assertEquals(p1.y, p2.y, delta);
+        assertEquals(p1.z, p2.z, delta);
+    }
+
+    /**
+     *      
+     *         . p6
+     * p3 .            .p5
+     * p1 .    . p2    .p4
+     */
+    @Test
+    public void testCentroid() {
+        BasicPoint p1 = new BasicPoint(0.0f, 0.0f, 0.0f);
+        BasicPoint p2 = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p3 = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p4 = new BasicPoint(2.0f, 0.0f, 0.0f);
+        BasicPoint p5 = new BasicPoint(2.0f, 1.0f, 0.0f);
+        BasicPoint p6 = new BasicPoint(1.0f, 2.0f, 0.0f);
+
+        Triangle t1 = new Triangle(p1, p2, p3);
+        assertPointEqual(
+            new BasicPoint(1.0f / 3.0f, 1.0f / 3.0f, 0.0f),
+            t1.component.centroid(),
+            0.00001f
+        );
+        assertEquals(3, t1.component.numNodes());
+        
+
+        Triangle t2 = new Triangle(p2, p4, p5);
+        assertPointEqual(
+            new BasicPoint(1.0f / 3.0f, 1.0f / 3.0f, 0.0f),
+            t1.component.centroid(),
+            0.00001f
+        );
+        assertEquals(3, t1.component.numNodes());
+        assertPointEqual(
+            new BasicPoint(5.0f / 3, 1.0f / 3, 0.0f / 3),
+            t2.component.centroid(),
+            0.00001f
+        );
+        assertEquals(3, t2.component.numNodes());
+
+
+        Triangle t3 = new Triangle(p3, p5, p6);
+        assertPointEqual(
+            new BasicPoint(1.0f / 3.0f, 1.0f / 3.0f, 0.0f),
+            t1.component.centroid(),
+            0.00001f
+        );
+        assertEquals(3, t1.component.numNodes());
+        assertPointEqual(
+            new BasicPoint(5.0f / 3, 1.0f / 3, 0.0f / 3),
+            t2.component.centroid(),
+            0.00001f
+        );
+        assertEquals(3, t3.component.numNodes());
+        assertPointEqual(
+            new BasicPoint(3.0f / 3, 4.0f / 3, 0.0f / 3),
+            t3.component.centroid(),
+            0.00001f
+        );
+        assertEquals(3, t3.component.numNodes());
+
+        Triangle t4 = new Triangle(p3, p2, p5);
+        assertPointEqual(
+            new BasicPoint(6.0f / 6, 4.0f / 6, 0.0f),
+            t1.component.centroid(),
+            0.00001f
+        );
+        assertEquals(6, t1.component.numNodes());
+        assertEquals(6, t4.component.numNodes());
+    }
+
+    void assertTriangleInLater(Triangle t1, Triangle... list) {
+        if (list.length == 0) fail();
+        if (list.length == 1) {
+            assertThat(t1, is(list[0]));
+            return;
+        }
+        CombinableMatcher<Triangle> matcher
+            = either(is(list[0])).or(is(list[1]));
+
+        for (int i = 2; i < list.length; i++) {
+            matcher = matcher.or(is(list[i]));
+        }
+        assertThat(t1, matcher);
+    }
+
+    /**
+     * p4 .    . p8  
+     * p3 .    . p7 
+     * p2 .    . p6 
+     * p1 .    . p5 
+     */
+    @Test
+    public void testRepTriangleAndNumTriangles() {
+        BasicPoint p1  = new BasicPoint(0.0f, 0.0f, 0.0f);
+        BasicPoint p2  = new BasicPoint(0.0f, 1.0f, 0.0f);
+        BasicPoint p3  = new BasicPoint(0.0f, 2.0f, 0.0f);
+        BasicPoint p4  = new BasicPoint(0.0f, 3.0f, 0.0f);
+        BasicPoint p5  = new BasicPoint(1.0f, 0.0f, 0.0f);
+        BasicPoint p6  = new BasicPoint(1.0f, 1.0f, 0.0f);
+        BasicPoint p7  = new BasicPoint(1.0f, 2.0f, 0.0f);
+        BasicPoint p8  = new BasicPoint(1.0f, 3.0f, 0.0f);
+
+        Triangle t1 = new Triangle(p1, p2, p5);
+        ConnectedComponent comp1 = t1.component;
+        assertEquals(comp1.numTriangles(), 1);
+        assertEquals(ConnectedComponent.maxTriangles, 1);
+        assertEquals(ConnectedComponent.maxTriangleComp, comp1);
+
+        Triangle t2 = new Triangle(p2, p5, p6);
+        assertEquals(comp1.numTriangles(), 2);
+        assertEquals(ConnectedComponent.maxTriangles, 2);
+
+        Triangle t3 = new Triangle(p2, p3, p6);
+        assertEquals(comp1.numTriangles(), 3);
+        assertEquals(ConnectedComponent.maxTriangles, 3);
+
+        Triangle t4 = new Triangle(p3, p8, p7);
+        ConnectedComponent comp2 = t4.component;
+        assertEquals(comp1.numTriangles(), 3);
+        assertEquals(comp2.numTriangles(), 1);
+        assertEquals(ConnectedComponent.maxTriangles, 3);
+
+        assertTriangleInLater(comp1.repTriangle(), t1, t2, t3);
+        assertTriangleInLater(comp2.repTriangle(), t4);
+        
+        Triangle t5 = new Triangle(p3, p6, p7);
+        assertEquals(comp1, comp2);
+        assertEquals(ConnectedComponent.maxTriangleComp, comp1);
+        assertEquals(comp1.numTriangles(), 5);
+        assertEquals(comp2.numTriangles(), 5);
+        assertEquals(ConnectedComponent.maxTriangles, 5);
+
+        assertTriangleInLater(comp1.repTriangle(), t1, t2, t3, t4, t5);
     }
 }
