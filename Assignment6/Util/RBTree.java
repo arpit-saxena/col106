@@ -194,6 +194,10 @@ public class RBTree<T extends Comparable<? super T>, E> {
     Node<T, E> root;
     int size = 0;
 
+    public int size() {
+        return size;
+    }
+
     public void insert(T key, E value) {
         if (root == null) {
             root = new Node<>(key, value);

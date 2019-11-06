@@ -232,4 +232,17 @@ public class TestArrayList {
         assertTrue(list.addIfNotExists(4, comparator));
         assertArrayEquals(new Integer[]{1, 2, 3, 0, 4}, list.toArray());
     }
+
+    class TestClass {
+        int a = 0;
+    }
+
+    @Test
+    public void testClassCast() {
+        ArrayList<TestClass> list = new ArrayList<>();
+        list.add(new TestClass());
+        TestClass[] a = new TestClass[list.size()];
+        list.copyToArray(a);
+        assertEquals(0, a[0].a);
+    }
 }

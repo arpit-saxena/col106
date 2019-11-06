@@ -70,6 +70,17 @@ public class ArrayList<T> {
         return ret;
     }
 
+    public void copyToArray(T[] copyTo) {
+        if (copyTo.length < size) {
+            throw new RuntimeException("Size of passed array less");
+        }
+        System.arraycopy(arr, 0, copyTo, 0, size);
+    }
+
+    public T[] internalArray() {
+        return arr;
+    }
+
     public void forEach(Consumer<T> consumer) {
         for (int i = 0; i < size; i++) {
             consumer.consume(arr[i]);

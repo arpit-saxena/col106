@@ -349,6 +349,12 @@ public class TestTriangle {
             0.00001f
         );
         assertEquals(3, t1.component.numNodes());
+        assertEquals(1, ConnectedComponent.allCentroids().length);
+        assertPointEqual(
+            new BasicPoint(1.0f / 3.0f, 1.0f / 3.0f, 0.0f),
+            ConnectedComponent.allCentroids()[0],
+            0.00001f
+        );
         
 
         Triangle t2 = new Triangle(p2, p4, p5);
@@ -364,6 +370,17 @@ public class TestTriangle {
             0.00001f
         );
         assertEquals(3, t2.component.numNodes());
+        assertEquals(2, ConnectedComponent.allCentroids().length);
+        assertPointEqual(
+            new BasicPoint(1.0f / 3.0f, 1.0f / 3.0f, 0.0f),
+            ConnectedComponent.allCentroids()[0],
+            0.00001f
+        );
+        assertPointEqual(            
+            new BasicPoint(5.0f / 3, 1.0f / 3, 0.0f / 3),
+            ConnectedComponent.allCentroids()[1],
+            0.00001f
+        );
 
 
         Triangle t3 = new Triangle(p3, p5, p6);
@@ -385,6 +402,22 @@ public class TestTriangle {
             0.00001f
         );
         assertEquals(3, t3.component.numNodes());
+        assertEquals(3, ConnectedComponent.allCentroids().length);
+        assertPointEqual(
+            new BasicPoint(1.0f / 3.0f, 1.0f / 3.0f, 0.0f),
+            ConnectedComponent.allCentroids()[0],
+            0.00001f
+        );
+        assertPointEqual(
+            new BasicPoint(3.0f / 3, 4.0f / 3, 0.0f / 3),
+            ConnectedComponent.allCentroids()[1],            
+            0.00001f
+        );
+        assertPointEqual(            
+            new BasicPoint(5.0f / 3, 1.0f / 3, 0.0f / 3),
+            ConnectedComponent.allCentroids()[2],
+            0.00001f
+        );
 
         Triangle t4 = new Triangle(p3, p2, p5);
         assertPointEqual(
@@ -394,6 +427,12 @@ public class TestTriangle {
         );
         assertEquals(6, t1.component.numNodes());
         assertEquals(6, t4.component.numNodes());
+        assertEquals(1, ConnectedComponent.allCentroids().length);
+        assertPointEqual(
+            new BasicPoint(6.0f / 6, 4.0f / 6, 0.0f),            
+            ConnectedComponent.allCentroids()[0],
+            0.00001f
+        );
     }
 
     void assertTriangleInLater(Triangle t1, Triangle... list) {

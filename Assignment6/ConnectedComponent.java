@@ -6,6 +6,8 @@ public class ConnectedComponent {
     static ConnectedComponent maxTriangleComp = null;
     static int maxTriangles = 0;
     static int creationCounter = 0;
+    static ArrayList<BasicPoint> allCentroids;
+    static boolean isLatest = true;
     BasicPoint sumCoordinates = new BasicPoint(0.0f, 0.0f, 0.0f);
     int numNodes = 0;
     ConnectedComponent parent = null;
@@ -24,6 +26,8 @@ public class ConnectedComponent {
         maxTriangleComp = null;
         maxTriangles = 0;
         creationCounter = 0;
+        allCentroids = null;
+        isLatest = true;
     }
 
     static ConnectedComponent getComponent(ConnectedComponent comp) {
@@ -57,6 +61,28 @@ public class ConnectedComponent {
                 comp.numNodes++;
             });
         });
+
+        // TODO: Improve sorting
+        RBTree<BasicPoint, BasicPoint> centroids = new RBTree<>();
+        comps.forEach(comp -> {
+            BasicPoint centroid = comp.centroid();
+            centroids.insert(centroid, centroid);
+        });
+        
+        allCentroids = new ArrayList<>(centroids.size());
+        centroids.forEach(centroid -> {
+            allCentroids.add(centroid);
+        });
+        isLatest = true;
+    }
+
+    public static BasicPoint[] allCentroids() {
+        if (!isLatest) {
+            updateCentroids();
+        }
+        BasicPoint[] arr = new BasicPoint[allCentroids.size()];
+        allCentroids.copyToArray(arr);
+        return arr;
     }
 
     BasicPoint centroid() {
@@ -110,12 +136,14 @@ public class ConnectedComponent {
             comp1.repTriangle = comp2.repTriangle;
         }
         comp1.infoLatest = false;
+        isLatest = false;
     }
 
     public void addTriangle(Triangle triangle) {
         if (triangle == null) return;
         ConnectedComponent comp = getComponent(this);
         comp.infoLatest = false;
+        isLatest = false;
         if (repTriangle == null) comp.repTriangle = triangle;
         comp.numTriangles++;
         if (comp.numTriangles > maxTriangles) {
