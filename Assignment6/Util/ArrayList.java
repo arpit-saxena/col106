@@ -70,7 +70,7 @@ public class ArrayList<T> {
         return ret;
     }
 
-    public void copyToArray(T[] copyTo) {
+    public void copyToArray(Object[] copyTo) {
         if (copyTo.length < size) {
             throw new RuntimeException("Size of passed array less");
         }

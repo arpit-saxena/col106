@@ -20,7 +20,7 @@ class BasicTriangle extends ComparableTriple<BasicPoint, BasicPoint, BasicPoint>
     }
 }
 
-public class Triangle implements Comparable<Triangle> {
+public class Triangle implements Comparable<Triangle>, TriangleInterface {
     Point[] vertices;
     Edge[] edges;
     int creationTime;
@@ -35,6 +35,14 @@ public class Triangle implements Comparable<Triangle> {
     public static void resetStatics() {
         globalCounter = 0;
         allTriangles = new RBTree<>();
+    }
+
+    public static Triangle getTriangle(BasicPoint p1, BasicPoint p2, BasicPoint p3) {
+        BasicTriangle bt = new BasicTriangle(p1, p2, p3);
+        RBTree.Node<BasicTriangle, Triangle> node
+            = allTriangles.search(bt);
+        if (node == null) return null;
+        return node.getValue();
     }
 
     public Triangle(BasicPoint... basicPoints) {
@@ -144,5 +152,10 @@ public class Triangle implements Comparable<Triangle> {
         }
 
         return 0;
+    }
+
+    @Override
+    public Point[] triangle_coord() {
+        return vertices;
     }
 }

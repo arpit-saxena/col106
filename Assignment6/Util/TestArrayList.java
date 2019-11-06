@@ -245,4 +245,9 @@ public class TestArrayList {
         list.copyToArray(a);
         assertEquals(0, a[0].a);
     }
+
+    @Test
+    public void testCopyToArray() {
+        
+    }
 }

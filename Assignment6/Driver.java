@@ -173,6 +173,7 @@ class Driver {
 	catch(Exception e)
 	{
 		System.err.println("Error parsing: 2	 " +e);
+		e.printStackTrace();
 	}
 	
 

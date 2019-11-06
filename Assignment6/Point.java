@@ -22,6 +22,13 @@ public class Point extends BasicPoint {
         return node.getValue();
     }
 
+    public static Point getPointIfExists(float... p) {
+        BasicPoint basicPoint = new BasicPoint(p[0], p[1], p[2]);
+        RBTree.Node<BasicPoint, Point> node = allPoints.search(basicPoint);
+        if (node == null) return null;
+        return node.getValue();
+    }
+
     public ArrayList<Point> neighborPoints = new ArrayList<>();
     public ArrayList<Edge> neighborEdges = new ArrayList<>();
     public ArrayList<Triangle> neighborTriangles = new ArrayList<>();

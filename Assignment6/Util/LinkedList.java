@@ -55,14 +55,25 @@ public class LinkedList<T> {
     }
 
     public T[] toArray() {
-        T[] ret = (T[]) new Object[size];
-        if (size == 0) return ret;
+        Object[] ret = new Object[size];
+        if (size == 0) return (T[]) ret;
+        return (T[]) toArray(ret);
+    }
+
+    private Object[] toArray(Object[] arr) {
         Node curr = head;
         for(int i = 0; i < size; i++) {
-            ret[i] = curr.value;
+            arr[i] = curr.value;
             curr = curr.next;
         }
-        return ret;
+        return arr;
+    }
+
+    public void copyToArray(Object[] arr) {
+        if (arr.length < size) {
+            throw new RuntimeException("Array length less than list size");
+        }
+        toArray(arr);
     }
 
     public void forEach(Consumer<T> consumer) {

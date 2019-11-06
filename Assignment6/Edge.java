@@ -51,6 +51,21 @@ public class Edge implements EdgeInterface {
         return new Edge(pair);
     }
 
+    public static Edge getEdgeIfExists(Point p1, Point p2) {
+        ComparablePair<Point, Point> pair;
+        if (p1.compareTo(p2) <= 0) {
+            pair = new ComparablePair<>(p1, p2);
+        } else {
+            pair = new ComparablePair<>(p2, p1);
+        }
+
+        RBTree.Node<ComparablePair<Point, Point>, Edge> node
+        = allEdges.search(pair);
+
+        if (node == null) return null;
+        return node.getValue();
+    }
+
     public ArrayList<Triangle> neighborTriangles = new ArrayList<>();
     public ConnectedComponent component = new ConnectedComponent();
 
