@@ -1,5 +1,6 @@
 import Util.ArrayList;
 import Util.ComparableTriple;
+import Util.LinkedList;
 import Util.RBTree;
 
 class WrongNumberArgsException extends IllegalArgumentException {
@@ -157,5 +158,58 @@ public class Triangle implements Comparable<Triangle>, TriangleInterface {
     @Override
     public Point[] triangle_coord() {
         return vertices;
+    }
+
+    private void markUnvisited(Triangle[] triangles) {
+        for (Triangle t : triangles) {
+            t.visited = false;
+        }
+    }
+
+    boolean visited = false;
+    public int getDiameter(ConnectedComponent comp) {
+        if (comp == null) {
+            System.err.println("No connected component found");
+            return 0;
+        }
+        Triangle[] triangles = new Triangle[comp.triangles().size()];
+        comp.triangles().copyToArray(triangles);
+        int maxDiameter = 0;
+        for (Triangle triangle : triangles) {
+            markUnvisited(triangles);
+            LinkedList<Triangle> queue = new LinkedList<>();
+            queue.add(triangle);
+            int distance = -1;
+            int numNodes = 1;
+            while (numNodes != 0) {
+                distance++;
+                int newNodes = 0;
+                while(numNodes-- > 0) {
+                    ArrayList<Triangle> neighbors = queue.pop().neighborTriangles;
+                    for (int i = 0; i < neighbors.size(); i++) {
+                        Triangle neighbor = neighbors.get(i);
+                        if (!neighbor.visited) {
+                            neighbor.visited = true;
+                            queue.add(neighbor);
+                            newNodes++;
+                        }
+                    }
+                }
+                numNodes = newNodes;
+            }
+            if (distance > maxDiameter) {
+                maxDiameter = distance;
+            }
+        }
+        return maxDiameter;
+    }
+
+    public int getDiameter() {
+        return getDiameter(ConnectedComponent.getComponent(component));
+    }
+
+    public static int maxDiameter() {
+        ConnectedComponent comp = ConnectedComponent.maxTriangleComp();
+        return comp.repTriangle.getDiameter(comp);
     }
 }

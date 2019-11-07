@@ -1,6 +1,11 @@
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import static org.hamcrest.Matchers.*;
+
+import org.hamcrest.collection.IsArrayContainingInAnyOrder;
 import org.hamcrest.core.CombinableMatcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -175,6 +180,7 @@ public class TestTriangle {
         );
         assertArrayEquals(new Triangle[]{}, t1.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{}, t1.extendedNeighborTriangles.toArray());
+        assertEquals(0, t1.getDiameter());
 
         Triangle t2 = new Triangle(p2, p4, p5);
 
@@ -187,6 +193,8 @@ public class TestTriangle {
         assertArrayEquals(new Triangle[]{t2}, t1.extendedNeighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{}, t2.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t1}, t2.extendedNeighborTriangles.toArray());
+        assertEquals(0, t1.getDiameter());
+        assertEquals(0, t2.getDiameter());
 
         Triangle t3 = new Triangle(p3, p5, p6);
 
@@ -206,6 +214,9 @@ public class TestTriangle {
         assertArrayEquals(new Triangle[]{t1, t3}, t2.extendedNeighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{}, t3.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t1, t2}, t3.extendedNeighborTriangles.toArray());
+        assertEquals(0, t1.getDiameter());
+        assertEquals(0, t2.getDiameter());
+        assertEquals(0, t3.getDiameter());
 
         Triangle t4 = new Triangle(p3, p2, p5);
 
@@ -222,6 +233,10 @@ public class TestTriangle {
         assertArrayEquals(new Triangle[]{t1, t2, t4}, t3.extendedNeighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t1, t2, t3}, t4.neighborTriangles.toArray());
         assertArrayEquals(new Triangle[]{t1, t2, t3}, t4.extendedNeighborTriangles.toArray());
+        assertEquals(2, t1.getDiameter());
+        assertEquals(2, t2.getDiameter());
+        assertEquals(2, t3.getDiameter());
+        assertEquals(2, t4.getDiameter());
     }
 
     /**
@@ -457,7 +472,7 @@ public class TestTriangle {
      * p1 .    . p5 
      */
     @Test
-    public void testRepTriangleAndNumTriangles() {
+    public void testRepTriangleAndTriangles() {
         BasicPoint p1  = new BasicPoint(0.0f, 0.0f, 0.0f);
         BasicPoint p2  = new BasicPoint(0.0f, 1.0f, 0.0f);
         BasicPoint p3  = new BasicPoint(0.0f, 2.0f, 0.0f);
@@ -470,21 +485,26 @@ public class TestTriangle {
         Triangle t1 = new Triangle(p1, p2, p5);
         ConnectedComponent comp1 = t1.component;
         assertEquals(comp1.numTriangles(), 1);
+        assertArrayEquals(new Triangle[]{t1}, comp1.triangles().toArray());
         assertEquals(ConnectedComponent.maxTriangles, 1);
         assertEquals(ConnectedComponent.maxTriangleComp, comp1);
 
         Triangle t2 = new Triangle(p2, p5, p6);
         assertEquals(comp1.numTriangles(), 2);
+        assertArrayEquals(new Triangle[]{t1, t2}, comp1.triangles().toArray());
         assertEquals(ConnectedComponent.maxTriangles, 2);
 
         Triangle t3 = new Triangle(p2, p3, p6);
         assertEquals(comp1.numTriangles(), 3);
+        assertArrayEquals(new Triangle[]{t1, t2, t3}, comp1.triangles().toArray());
         assertEquals(ConnectedComponent.maxTriangles, 3);
 
         Triangle t4 = new Triangle(p3, p8, p7);
         ConnectedComponent comp2 = t4.component;
         assertEquals(comp1.numTriangles(), 3);
+        assertArrayEquals(new Triangle[]{t1, t2, t3}, comp1.triangles().toArray());
         assertEquals(comp2.numTriangles(), 1);
+        assertArrayEquals(new Triangle[]{t4}, comp2.triangles().toArray());
         assertEquals(ConnectedComponent.maxTriangles, 3);
 
         assertTriangleInLater(comp1.repTriangle(), t1, t2, t3);
@@ -494,6 +514,12 @@ public class TestTriangle {
         assertEquals(comp1, comp2);
         assertEquals(ConnectedComponent.maxTriangleComp, comp1);
         assertEquals(comp1.numTriangles(), 5);
+        Triangle[] t = new Triangle[comp1.triangles().size()];
+        comp1.triangles().copyToArray(t);
+        assertThat(
+            Arrays.asList(t),
+            containsInAnyOrder(t1, t2, t3, t4, t5)
+        );
         assertEquals(comp2.numTriangles(), 5);
         assertEquals(ConnectedComponent.maxTriangles, 5);
 

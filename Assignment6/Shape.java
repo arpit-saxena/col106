@@ -143,4 +143,9 @@ public class Shape implements ShapeInterface
         if (point == null) return null;
         return point.components.get(0).centroid();
     }
+
+    @Override
+    public int MAXIMUM_DIAMETER() {
+        return Triangle.maxDiameter();
+    }
 }

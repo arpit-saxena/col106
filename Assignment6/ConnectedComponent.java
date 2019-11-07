@@ -1,4 +1,5 @@
 import Util.ArrayList;
+import Util.LinkedList;
 import Util.RBTree;
 
 public class ConnectedComponent {
@@ -15,6 +16,7 @@ public class ConnectedComponent {
     int numTriangles = 0;
     Triangle repTriangle = null;
     int creationTime;
+    LinkedList<Triangle> triangles = new LinkedList<>();
 
     ConnectedComponent() {
         count++;
@@ -104,6 +106,10 @@ public class ConnectedComponent {
         );
     }
 
+    static ConnectedComponent maxTriangleComp() {
+        return getComponent(maxTriangleComp);
+    }
+
     int numNodes() {
         ConnectedComponent comp = getComponent(this);
         if (!comp.infoLatest) {
@@ -120,6 +126,10 @@ public class ConnectedComponent {
         return getComponent(this).numTriangles;
     }
 
+    LinkedList<Triangle> triangles() {
+        return getComponent(this).triangles;
+    }
+
     void merge(ConnectedComponent other) {
         ConnectedComponent comp1 = getComponent(this);
         ConnectedComponent comp2 = getComponent(other);
@@ -128,6 +138,8 @@ public class ConnectedComponent {
         count--;
         comp2.parent = comp1;
         comp1.numTriangles += comp2.numTriangles;
+        comp1.triangles.addLinkedList(comp2.triangles);
+        comp2.triangles = null;
         if (comp1.numTriangles >= maxTriangles) {
             maxTriangles = comp1.numTriangles;
             maxTriangleComp = this;
@@ -150,6 +162,7 @@ public class ConnectedComponent {
             maxTriangles = comp.numTriangles;
             maxTriangleComp =this;
         }
+        comp.triangles.add(triangle);
     }
 
     @Override
