@@ -33,6 +33,18 @@ public class LinkedList<T> {
         return node;
     }
 
+    public void addLinkedList(LinkedList<T> list) {
+        if (list == null) return;
+        if (list.head == null) return;
+        if (head == null) {
+            head = list.head;
+            return;
+        }
+        tail.next = list.head;
+        tail = list.tail;
+        size += list.size;
+    }
+
     public void delete(Node node) {
         if (node == null) return;
 
@@ -80,5 +92,14 @@ public class LinkedList<T> {
         for (Node curr = head; curr != null; curr = curr.next) {
             consumer.consume(curr.value);
         }
+    }
+
+    public T pop() {
+        if (head == null) return null;
+        T ret = head.value;
+        head = head.next;
+        if (head == null) tail = null;
+        size--;
+        return ret;
     }
 }

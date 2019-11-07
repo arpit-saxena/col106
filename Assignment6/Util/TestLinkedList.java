@@ -73,4 +73,47 @@ public class TestLinkedList {
 
         assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, other.toArray());
     }
+
+    @Test
+    public void testAddLinkedList() {
+        LinkedList<Integer> l1 = new LinkedList<>();
+        LinkedList<Integer> l2 = new LinkedList<>();
+        l1.add(1); l1.add(2); l1.add(3);
+        l1.addLinkedList(l2);
+        assertArrayEquals(new Integer[]{1, 2, 3}, l1.toArray());
+        assertEquals(3, l1.size);
+        l1.addLinkedList(null);
+        assertEquals(3, l1.size);
+        assertArrayEquals(new Integer[]{1, 2, 3}, l1.toArray());
+        l2.add(4); 
+        LinkedList<Integer>.Node tail = l2.add(5);
+        l1.addLinkedList(l2);
+        assertSame(l1.tail, tail);
+        assertEquals(5, l1.size);
+        assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, l1.toArray());
+    }
+
+    @Test
+    public void testPop() {
+        LinkedList<Integer> l1 = new LinkedList<>();
+        LinkedList<Integer>.Node n1 = l1.add(1),
+                                 n2 = l1.add(2),
+                                 n3 = l1.add(3);
+        assertEquals(new Integer(1), l1.pop());
+        assertSame(n3, l1.tail);
+        assertSame(n2, l1.head);
+        assertArrayEquals(new Integer[]{2, 3}, l1.toArray());
+
+        assertEquals(new Integer(2), l1.pop());
+        assertSame(n3, l1.tail);
+        assertSame(n3, l1.head);
+        assertArrayEquals(new Integer[]{3}, l1.toArray());
+
+        assertEquals(new Integer(3), l1.pop());
+        assertNull(l1.tail);
+        assertNull(l1.head);
+        assertArrayEquals(new Integer[]{}, l1.toArray());
+
+        assertNull(l1.pop());
+    }
 }
