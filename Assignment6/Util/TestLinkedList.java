@@ -87,8 +87,10 @@ public class TestLinkedList {
         assertArrayEquals(new Integer[]{1, 2, 3}, l1.toArray());
         l2.add(4); 
         LinkedList<Integer>.Node tail = l2.add(5);
+        LinkedList<Integer>.Node l1tail = l1.tail;
         l1.addLinkedList(l2);
         assertSame(l1.tail, tail);
+        assertSame(l2.head.previous, l1tail);
         assertEquals(5, l1.size);
         assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, l1.toArray());
 
@@ -108,11 +110,13 @@ public class TestLinkedList {
         assertEquals(new Integer(1), l1.pop());
         assertSame(n3, l1.tail);
         assertSame(n2, l1.head);
+        assertNull(l1.head.previous);
         assertArrayEquals(new Integer[]{2, 3}, l1.toArray());
 
         assertEquals(new Integer(2), l1.pop());
         assertSame(n3, l1.tail);
         assertSame(n3, l1.head);
+        assertNull(l1.head.previous);
         assertArrayEquals(new Integer[]{3}, l1.toArray());
 
         assertEquals(new Integer(3), l1.pop());

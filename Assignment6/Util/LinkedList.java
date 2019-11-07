@@ -43,6 +43,7 @@ public class LinkedList<T> {
             return;
         }
         tail.next = list.head;
+        list.head.previous = tail;
         tail = list.tail;
         size += list.size;
     }
@@ -101,6 +102,9 @@ public class LinkedList<T> {
         T ret = head.value;
         head = head.next;
         if (head == null) tail = null;
+        else {
+            head.previous = null;
+        }
         size--;
         return ret;
     }
