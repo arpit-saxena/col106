@@ -25,6 +25,7 @@ public class Shape implements ShapeInterface
     @Override
     public EdgeInterface[] BOUNDARY_EDGES() {
         int size = Edge.boundaryEdges.size();
+        if (size == 0) return null;
         EdgeInterface[] boundary = new EdgeInterface[size];
         Edge.boundaryEdges.copyToArray(boundary);
         return boundary;
@@ -72,6 +73,7 @@ public class Shape implements ShapeInterface
         Triangle triangle = getTriangle(t);
         if (triangle == null) return null;
         ArrayList<Triangle> neighbors = triangle.extendedNeighborTriangles;
+        if (neighbors.size() == 0) return null;
         TriangleInterface[] ret = new TriangleInterface[neighbors.size()];
         neighbors.copyToArray(ret);
         return ret;
