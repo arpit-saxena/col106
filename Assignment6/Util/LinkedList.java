@@ -38,6 +38,8 @@ public class LinkedList<T> {
         if (list.head == null) return;
         if (head == null) {
             head = list.head;
+            tail = list.tail;
+            size = list.size;
             return;
         }
         tail.next = list.head;

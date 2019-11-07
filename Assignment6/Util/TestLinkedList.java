@@ -91,6 +91,12 @@ public class TestLinkedList {
         assertSame(l1.tail, tail);
         assertEquals(5, l1.size);
         assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, l1.toArray());
+
+        LinkedList<Integer> l3 = new LinkedList<>();
+        l3.addLinkedList(l1);
+        assertSame(l1.head, l3.head);
+        assertSame(l1.tail, l3.tail);
+        assertEquals(5, l3.size);
     }
 
     @Test
