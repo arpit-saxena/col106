@@ -65,17 +65,12 @@ public class ConnectedComponent implements Comparable<ConnectedComponent> {
             });
         });
 
-        // TODO: Improve sorting
-        RBTree<BasicPoint, BasicPoint> centroids = new RBTree<>();
+        allCentroids = new ArrayList<>(comps.size());
         comps.forEach(comp -> {
             BasicPoint centroid = comp.centroid();
-            centroids.insert(centroid, centroid);
-        });
-        
-        allCentroids = new ArrayList<>(centroids.size());
-        centroids.forEach(centroid -> {
             allCentroids.add(centroid);
         });
+        allCentroids.sort((p1, p2) -> p1.compareTo(p2));
         isLatest = true;
     }
 
