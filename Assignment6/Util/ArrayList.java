@@ -243,7 +243,7 @@ public class ArrayList<T> {
 
     /* Sorts */
 
-    static final int SORT_SWITCH_SIZE = 20; // Switch to insertion sort below this
+    static final int SORT_SWITCH_SIZE = 8; // Switch to insertion sort below this
     Comparator<T> comparator = null;
 
     public static <T> void sortArray(T[] arr, Comparator<T> comparator) {
@@ -339,15 +339,7 @@ public class ArrayList<T> {
     }
 
     public static <T extends Comparable<T>> T[] bubbleSort(T[] arr) {
-        for (int i = 0; i < arr.length - 1; i++) {
-            for (int j = arr.length - 1; j > i; j--) {
-                if (arr[j].compareTo(arr[j - 1]) < 0) {
-                    T temp = arr[j];
-                    arr[j] = arr[j-1];
-                    arr[j-1] = temp;
-                }
-            }
-        }
+        sortArray(arr, (a, b) -> a.compareTo(b));
         return arr;
     }
 }
