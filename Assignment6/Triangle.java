@@ -28,7 +28,6 @@ public class Triangle implements Comparable<Triangle>, TriangleInterface {
     ConnectedComponent component = new ConnectedComponent();
 
     ArrayList<Triangle> neighborTriangles = new ArrayList<>();
-    ArrayList<Triangle> extendedNeighborTriangles = new ArrayList<>();
     private static int globalCounter = 0;
     public static RBTree<BasicTriangle, Triangle> allTriangles
         = new RBTree<>();
@@ -65,16 +64,6 @@ public class Triangle implements Comparable<Triangle>, TriangleInterface {
         for (int i = 0; i < 3; i++) {
             vertices[i] = Point.getPoint(basicPoints[i]);
         }
-
-        extendedNeighborTriangles = ArrayList.merge3Lists(
-            (t1, t2) -> t1.creationTime - t2.creationTime,
-            vertices[0].neighborTriangles,
-            vertices[1].neighborTriangles,
-            vertices[2].neighborTriangles
-        );
-        extendedNeighborTriangles.forEach(triangle -> {
-            triangle.extendedNeighborTriangles.add(this);
-        });
 
         for (int i = 0; i < 3; i++) {
             vertices[i].neighborTriangles.add(this);
@@ -135,6 +124,16 @@ public class Triangle implements Comparable<Triangle>, TriangleInterface {
                 return Double.compare(d2, d1 + d3) != 0;
             }
         }
+    }
+
+    ArrayList<Triangle> extendedNeighborTriangles() {
+        return ArrayList.merge3Lists(
+            (t1, t2) -> t1.creationTime - t2.creationTime,
+            vertices[0].neighborTriangles,
+            vertices[1].neighborTriangles,
+            vertices[2].neighborTriangles,
+            this
+        );
     }
 
     @Override

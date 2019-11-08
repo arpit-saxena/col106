@@ -87,7 +87,7 @@ public class Shape implements ShapeInterface
     public TriangleInterface[] EXTENDED_NEIGHBOR_TRIANGLE(float[] t) {
         Triangle triangle = getTriangle(t);
         if (triangle == null) return null;
-        ArrayList<Triangle> neighbors = triangle.extendedNeighborTriangles;
+        ArrayList<Triangle> neighbors = triangle.extendedNeighborTriangles();
         if (neighbors.size() == 0) return null;
         TriangleInterface[] ret = new TriangleInterface[neighbors.size()];
         neighbors.copyToArray(ret);

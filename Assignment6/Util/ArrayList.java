@@ -148,13 +148,24 @@ public class ArrayList<T> {
     public static <T extends Comparable<T>> ArrayList<T> merge2Lists(
         Comparator<T> comparator,
         ArrayList<T> list1,
-        ArrayList<T> list2
+        ArrayList<T> list2,
+        final T elemExclude
     ){
         ArrayList<T> finalList = new ArrayList<>(
             list1.size() + list2.size()
         );
         int i = 0, j = 0;
         while (i < list1.size() && j < list2.size()) {
+            if (elemExclude != null) {
+                if (comparator.compare(list1.get(i), elemExclude) == 0) {
+                    i++;
+                    continue;
+                }
+                if (comparator.compare(list2.get(j), elemExclude) == 0) {
+                    j++;
+                    continue;
+                }
+            }
             int comp;
             if ((comp = comparator.compare(list1.get(i), list2.get(j))) == 0) {
                 i++;
@@ -168,15 +179,37 @@ public class ArrayList<T> {
         }
 
         while (i < list1.size()) {
+            if (
+                elemExclude != null
+                && comparator.compare(list1.get(i), elemExclude) == 0
+            ){
+                i++;
+                continue;
+            }
             finalList.add(list1.get(i));
             i++;
         }
 
         while (j < list2.size()) {
+            if (
+                elemExclude != null
+                && comparator.compare(list2.get(j), elemExclude) == 0
+            ){
+                j++;
+                continue;
+            }
             finalList.add(list2.get(j));
             j++;
         }
         return finalList;
+    }
+
+    public static <T extends Comparable<T>> ArrayList<T> merge2Lists(
+        Comparator<T> comparator,
+        ArrayList<T> list1,
+        ArrayList<T> list2
+    ){
+        return merge2Lists(comparator, list1, list2, null);
     }
 
     /**
@@ -189,8 +222,23 @@ public class ArrayList<T> {
         ArrayList<T> list2,
         ArrayList<T> list3
     ){
-            ArrayList<T> temp = merge2Lists(comparator, list1, list2);
-            return merge2Lists(comparator, temp, list3);
+            ArrayList<T> temp = merge2Lists(comparator, list1, list2, null);
+            return merge2Lists(comparator, temp, list3, null);
+        }
+
+    /**
+     * Merging done in such a way that same triangle in more than one
+     * list is only added once
+     */
+    public static <T extends Comparable<T>> ArrayList<T> merge3Lists(
+        Comparator<T> comparator,
+        ArrayList<T> list1,
+        ArrayList<T> list2,
+        ArrayList<T> list3,
+        T elemExclude
+    ){
+            ArrayList<T> temp = merge2Lists(comparator, list1, list2, elemExclude);
+            return merge2Lists(comparator, temp, list3, elemExclude);
         }
 
     /* Sorts */
