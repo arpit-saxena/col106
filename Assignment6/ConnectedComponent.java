@@ -1,8 +1,9 @@
 import Util.ArrayList;
+import Util.ComparablePair;
 import Util.LinkedList;
 import Util.RBTree;
 
-public class ConnectedComponent {
+public class ConnectedComponent implements Comparable<ConnectedComponent> {
     static int count = 0;
     static ConnectedComponent maxTriangleComp = null;
     static int maxTriangles = 0;
@@ -171,5 +172,89 @@ public class ConnectedComponent {
         if (!(other instanceof ConnectedComponent)) return false;
         ConnectedComponent otherComp = (ConnectedComponent) other;
         return getComponent(this) == getComponent(otherComp);
+    }
+
+    @Override
+    public int compareTo(ConnectedComponent other) {
+        if (other == null) return -1;
+        ConnectedComponent comp1 = getComponent(this);
+        ConnectedComponent comp2 = getComponent(other);
+        return comp1.creationTime - comp2.creationTime;
+    }
+
+    static class Counter {
+        int count = 0;
+        public int increment() {
+            return count++;
+        }
+    }
+
+    private static ConnectedComponent getPointsComponent(Point p) {
+        ConnectedComponent comp1 = p.components.get(0);
+        for (int j = 1; j < p.components.size(); j++) {
+            if (!p.components.get(j).equals(comp1)) {
+                return null;
+            }
+        }
+        p.components = new ArrayList<>();
+        p.components.add(comp1);
+        return comp1;
+    }
+
+    private static float calcDist(Point p1, Point p2) {
+        return (p1.x - p2.x) * (p1.x - p2.x) 
+               + (p1.y - p2.y) * (p1.y - p2.y)
+               + (p1.z - p2.z) * (p1.z - p2.z);
+    }
+
+    private static class Container<T> {
+        T val;
+    }
+
+    public static ComparablePair<Point, Point> closestComponents() {
+        ArrayList<ArrayList<Point>> compPoints = new ArrayList<ArrayList<Point>>(count);
+        ArrayList<Point> points = new ArrayList<>(Point.allPoints.size());
+        RBTree<ConnectedComponent, Integer> comps = new RBTree<>();
+        Point.allPoints.forEach(p -> points.add(p));
+        for (int i = 0; i < points.size(); i++) {
+            Point p = points.get(i);
+            ConnectedComponent comp = getPointsComponent(p);
+            if (comp == null) {
+                return new ComparablePair<>(p, p);
+            }
+            RBTree.Node<ConnectedComponent, Integer> node = comps.search(comp);
+            if (node != null) {
+                compPoints.get(node.getValue()).add(p);
+            } else {
+                comps.insert(comp, compPoints.size());
+                ArrayList<Point> newCompPoints = new ArrayList<>();
+                newCompPoints.add(p);
+                compPoints.add(newCompPoints);
+            }
+        }
+
+        Container<Float> minDist = new Container<>();
+        minDist.val = Float.MAX_VALUE;
+        ComparablePair<Point, Point> minPair = new ComparablePair<Point,Point>(null, null);
+        
+        for (int comp1Index = 0; comp1Index < compPoints.size(); comp1Index++) {
+            for (int comp2Index = comp1Index + 1; comp2Index < compPoints.size(); comp2Index++) {
+                ArrayList<Point> points1 = compPoints.get(comp1Index),
+                                 points2 = compPoints.get(comp2Index);
+
+                points1.forEach(p1 -> {
+                    points2.forEach(p2 -> {
+                        float dist = calcDist(p1, p2);
+                        if (dist < minDist.val) {
+                            minDist.val = dist;
+                            minPair.first = p1;
+                            minPair.second = p2;
+                        }
+                    });
+                });
+            }
+        }
+
+        return minPair;
     }
 }

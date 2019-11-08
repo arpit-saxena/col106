@@ -1,4 +1,5 @@
 import Util.ArrayList;
+import Util.ComparablePair;
 
 public class Shape implements ShapeInterface
 {
@@ -22,12 +23,26 @@ public class Shape implements ShapeInterface
         return Edge.typeMesh();
     }
 
+    float calcLengthSquared(EdgeInterface e) {
+        PointInterface p1 = e.edgeEndPoints()[0];
+        PointInterface p2 = e.edgeEndPoints()[1];
+        return (p1.getX() - p2.getX()) * (p1.getX() - p2.getX())
+               + (p1.getY() - p2.getY()) * (p1.getY() - p2.getY())
+               + (p1.getZ() - p2.getZ()) * (p1.getZ() - p2.getZ());
+    }
+
     @Override
     public EdgeInterface[] BOUNDARY_EDGES() {
         int size = Edge.boundaryEdges.size();
         if (size == 0) return null;
         EdgeInterface[] boundary = new EdgeInterface[size];
         Edge.boundaryEdges.copyToArray(boundary);
+        ArrayList.sortArray(boundary, (e1, e2) -> {
+            float dist = calcLengthSquared(e1) - calcLengthSquared(e2);
+            if (dist < 0.0f) return -1;
+            else if (dist == 0.0f) return 0;
+            return 1;
+        });
         return boundary;
     }
 
@@ -147,5 +162,11 @@ public class Shape implements ShapeInterface
     @Override
     public int MAXIMUM_DIAMETER() {
         return Triangle.maxDiameter();
+    }
+
+    @Override
+    public PointInterface[] CLOSEST_COMPONENTS() {
+        ComparablePair<Point, Point> pair = ConnectedComponent.closestComponents();
+        return new PointInterface[]{pair.first, pair.second};
     }
 }

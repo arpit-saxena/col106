@@ -1,6 +1,10 @@
 package Util;
 
 import static org.junit.Assert.*;
+
+import java.util.Arrays;
+import java.util.Random;
+
 import org.junit.Test;
 
 import Util.ArrayList;
@@ -246,8 +250,66 @@ public class TestArrayList {
         assertEquals(0, a[0].a);
     }
 
+    private void testInsertionSort(Integer...integers) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.comparator = (a, b) -> a - b;
+        list.addAll(integers);
+        list.insertionSort(0, list.size() - 1);
+        Arrays.sort(integers);
+        assertArrayEquals(integers, list.toArray());
+    }
+
+    private void testQuickSort(Integer...integers) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.comparator = (a, b) -> a - b;
+        list.addAll(integers);
+        list.quickSort(0, list.size() - 1);
+        Arrays.sort(integers);
+        assertArrayEquals(integers, list.toArray());
+    }
+
+    public void testSort(Integer... integers) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.comparator = (a, b) -> a - b;
+        list.addAll(integers);
+        list.sort(0, list.size() - 1);
+        Arrays.sort(integers);
+        assertArrayEquals(integers, list.toArray());
+    }
+
     @Test
-    public void testCopyToArray() {
-        
+    public void testInsertionSort() {
+        testInsertionSort(1, 2, 3);
+        testInsertionSort(2, 3, 1);
+        testInsertionSort(1, 2, 3);
+        testInsertionSort(4, 3, 2, 1);
+        testInsertionSort(4, 3, 1, 2);
+    }
+
+    @Test
+    public void testQuickSort() {
+        testQuickSort(1, 2, 3);
+        testQuickSort(2, 3, 1);
+        testQuickSort(1, 2, 3);
+        testQuickSort(4, 3, 2, 1);
+        testQuickSort(4, 3, 1, 2);
+    }
+
+    @Test
+    public void testSort() {
+        Random rand = new Random();
+        Integer[] arr = new Integer[1000000];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = rand.nextInt(arr.length);
+        }
+        testSort(arr);
+    }
+
+    @Test
+    public void testRandomInt() {
+        int val = ArrayList.randomInt(0, 10);
+        assertTrue(val >= 0 && val <= 10);
+        val = ArrayList.randomInt(5, 5);
+        assertTrue(val == 5);
     }
 }

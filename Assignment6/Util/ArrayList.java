@@ -193,6 +193,103 @@ public class ArrayList<T> {
             return merge2Lists(comparator, temp, list3);
         }
 
+    /* Sorts */
+
+    static final int SORT_SWITCH_SIZE = 20; // Switch to insertion sort below this
+    Comparator<T> comparator = null;
+
+    public static <T> void sortArray(T[] arr, Comparator<T> comparator) {
+        ArrayList<T> list = new ArrayList<>();
+        list.arr = arr;
+        list.size = arr.length;
+        list.capacity = arr.length;
+        list.sort(comparator);
+    }
+
+    public void sort(Comparator<T> comparator) {
+        if (comparator == null) return;
+        this.comparator = comparator;
+        sort(0, size - 1);
+    }
+
+    void sort(int begin, int end) {
+        if (begin >= end) return;
+        int size = end - begin + 1;
+        if (size < SORT_SWITCH_SIZE) {
+            insertionSort(begin, end);
+        } else {
+            quickSort(begin, end);
+        }
+    }
+
+    void insertionSort(int begin, int end) {
+        //Assuming begin <= end
+
+        // arr[begin..i-1] is sorted, begin <= i <= end + 1
+        int i = begin + 1;
+        while (i <= end) {
+            int j = i;
+            T elem = arr[i];
+            //INV: elem < arr[j+1..i], begin <= j <= i
+            // Have to compare with arr[begin..j-1], arr[j] is empty
+            while (j > begin) {
+                int res = comparator.compare(elem, arr[j - 1]);
+                if (res < 0) {
+                    arr[j] = arr[j-1];
+                } else {
+                    break;
+                }
+                j--;
+            }
+            //assert: arr[begin..j-1] <= elem < arr[j+1..end]
+            arr[j] = elem;
+            i++;
+        }
+    }
+
+
+    /**
+     * Returns a random integer between low and high (both inclusive)
+     */
+    static int randomInt(int low, int high) {
+        if (high < low) return 0;
+        if (high == low) return low;
+        long time = System.nanoTime();
+        return (int) (low + time % (high - low + 1));
+    }
+
+    void swap(int i, int j) {
+        T temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    void quickSort(int begin, int end) {
+        // Assuming begin <= end
+
+        T pivot = arr[randomInt(begin, end)];
+
+        int i = begin, j = begin, k = end;
+        // INV: arr[begin..i-1] < pivot, arr[i..j-1] == pivot, arr[k+1..end] > pivot
+        // begin <= i <= j <= k + 1 <= end
+        while (j < k + 1) {
+            int res = comparator.compare(arr[j], pivot);
+            if (res < 0) {
+                swap(i, j);
+                i++;
+                j++;
+            } else if (res == 0) {
+                j++;
+            } else {
+                swap(j, k);
+                k--;
+            }
+        }
+
+        sort(begin, i - 1);
+        sort(k + 1, end);
+    }
+
     public static <T extends Comparable<T>> T[] bubbleSort(T[] arr) {
         for (int i = 0; i < arr.length - 1; i++) {
             for (int j = arr.length - 1; j > i; j--) {

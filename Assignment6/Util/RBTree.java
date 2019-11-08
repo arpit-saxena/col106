@@ -201,6 +201,7 @@ public class RBTree<T extends Comparable<? super T>, E> {
     public void insert(T key, E value) {
         if (root == null) {
             root = new Node<>(key, value);
+            size++;
             root.color = Node.Color.BLACK;
             return;
         }
