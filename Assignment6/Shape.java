@@ -115,6 +115,16 @@ public class Shape implements ShapeInterface
     }
 
     @Override
+    public EdgeInterface[] EDGE_NEIGHBORS_OF_POINT(float[] p) {
+        Point point = Point.getPointIfExists(p);
+        if (point == null) return null;
+        ArrayList<Edge> neighbors = point.neighborEdges;
+        EdgeInterface[] arr = new EdgeInterface[neighbors.size()];
+        neighbors.copyToArray(arr);
+        return arr;
+    }
+
+    @Override
     public TriangleInterface[] FACE_NEIGHBORS_OF_POINT(float[] p) {
         return INCIDENT_TRIANGLES(p);
     }
