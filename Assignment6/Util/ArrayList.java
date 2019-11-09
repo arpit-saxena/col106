@@ -302,7 +302,7 @@ public class ArrayList<T> {
     static int randomInt(int low, int high) {
         if (high < low) return 0;
         if (high == low) return low;
-        long time = System.nanoTime();
+        long time = Math.abs(System.nanoTime());
         return (int) (low + time % (high - low + 1));
     }
 
