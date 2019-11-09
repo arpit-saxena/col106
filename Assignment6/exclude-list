@@ -4,7 +4,6 @@
 *.py
 names*
 /INP
-*.txt
 *.class
 /src/
 /exclude-list
